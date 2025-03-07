@@ -18,7 +18,7 @@ async def moveTank(lSpeed: int, rSpeed: int, dist: float):
     lMotor.run_at_speed(lSpeed)
     rMotor.run_at_speed(rSpeed)
 
-    while getRelativeAbsAngle(startLAngle, startRAngle) < dist:
+    while getRelativeAbsAngle(startLAngle, startRAngle) < abs(dist):
         
         await asyncio.sleep(0.01) 
 
@@ -38,7 +38,7 @@ async def steering(speed: float, dist: float, steering: float):
 
     dir = getDir(speed, dist)
 
-    while getRelativeAbsAngle(startLAngle, startRAngle) < dist:
+    while getRelativeAbsAngle(startLAngle, startRAngle) < abs(dist):
         buggySpeedSetterUtil(dir, steering, speed)
         await asyncio.sleep(0.01)
 
