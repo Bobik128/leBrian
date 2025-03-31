@@ -91,3 +91,7 @@ def getDir(speed: float, dist: float):
         dist *= -1
     
     return dist > 0
+
+def stop():
+    lMotor.hold()
+    rMotor.hold()

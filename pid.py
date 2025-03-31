@@ -2,16 +2,25 @@ from brian import *
 import buggy
 import brick
 import asyncio
+import math
 
 Kp: float
 Ki: float
 Kd: float
 
-def init(kp: float, ki: float, kd: float):
-    global Kp, Ki, Kd
+rKp: float
+rKi: float
+rKd: float
+
+def init(kp: float, ki: float, kd: float, rkp: float, rki: float, rkd: float):
+    global Kp, Ki, Kd, rKp, rKi, rKd
     Kp = kp
     Ki = ki
     Kd = kd
+
+    rKp = rkp
+    rKi = rki
+    rKd = rkd
 
 async def goForDegrees(targetAngle: float, dist: float, speed: float):
     dir: bool = buggy.getDir(speed, dist)
@@ -41,11 +50,8 @@ async def goForDegrees(targetAngle: float, dist: float, speed: float):
         elif integral > 100:
             integral = 100
 
-
         await asyncio.sleep(0.01)
-    
-    buggy.lMotor.hold()
-    buggy.rMotor.hold()
+    buggy.stop()
 
 async def lineFollower(target: float, speed: float):
     speed = abs(speed)
@@ -76,3 +82,56 @@ async def lineFollower(target: float, speed: float):
 
 
         await asyncio.sleep(0.01)
+
+    
+async def turnTo(targetAngle: int, tolerance: int, speed: int, powerup: int):
+    dir: bool = False
+
+    nowDir: int = brick.gyro.angle()
+    print(nowDir)
+
+    if nowDir == targetAngle:
+        return
+
+    integral: float = 0
+    lastError: float = 0
+
+    print("started")
+
+    while abs(targetAngle + nowDir) > tolerance:
+        nowDir = brick.gyro.angle()
+
+        ILimit: float = 15
+        if integral > ILimit:
+            integral = ILimit
+        elif integral < -ILimit:
+            integral = -ILimit
+
+        error: float = targetAngle + nowDir
+        output: float = rKp * error + rKi * integral + rKd * (error - lastError)
+
+        print(output)
+
+        lSpeed: float = speed * -output
+        rSpeed: float = speed * output
+
+        speedLimit: float = 600
+        if lSpeed > speedLimit:
+            lSpeed = speedLimit
+        elif lSpeed < -speedLimit:
+            lSpeed = -speedLimit
+
+        if rSpeed > speedLimit:
+            rSpeed = speedLimit
+        elif rSpeed < -speedLimit:
+            rSpeed = -speedLimit
+
+        buggy.lMotor.run_at_speed(math.floor(lSpeed))
+        buggy.rMotor.run_at_speed(math.floor(rSpeed))
+
+        integral += error
+        lastError = error
+
+        await asyncio.sleep(0.01)
+    
+    buggy.stop()
