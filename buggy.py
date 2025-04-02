@@ -61,9 +61,9 @@ def speedControler(speed: float, input: float, direction: bool):
     return regulatedSpeed
 
 def buggySpeedSetterUtil(dir: bool, input: float, speed: float):
-    s1: int = math.floor(speedControler(speed, input, True))
-    s2: int = math.floor(speedControler(speed, input, False))
     if dir:
+        s1: int = math.floor(speedControler(speed, input, True))
+        s2: int = math.floor(speedControler(speed, input, False))
         if abs(input) > speed:
             if input < 0:
                 rMotor.run_at_speed(-s1)
@@ -75,8 +75,10 @@ def buggySpeedSetterUtil(dir: bool, input: float, speed: float):
             rMotor.run_at_speed(s1)
             lMotor.run_at_speed(s2)
     else:
-        if abs(-input) > speed:
-            if -input < 0:
+        s1: int = math.floor(speedControler(speed, -input, True))
+        s2: int = math.floor(speedControler(speed, -input, False))
+        if abs(input) > speed:
+            if input >= 0:
                 rMotor.run_at_speed(s1)
                 lMotor.run_at_speed(-s2)
             else:
