@@ -80,9 +80,9 @@ async def goTilLine(targetAngle: float, speed: float, stopAtEnd: bool = True):
     if stopAtEnd: buggy.stop()
 
 
-async def goTilButton(targetAngle: float, speed: float, button: sensors.EV3.TouchSensorEV3, stopDelay: int = 0):
-    dir: bool = buggy.getDir(speed, 0)
-    speed = abs(speed)
+async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchSensorEV3, stopDelay: int = 0):
+    dir: bool = buggy.getDir(spd, 1)
+    speed: float = abs(spd)
 
     integral: float = 0
     lastError: float = 0
@@ -91,7 +91,7 @@ async def goTilButton(targetAngle: float, speed: float, button: sensors.EV3.Touc
         error: float = targetAngle + brick.gyro.angle()
         output: float = Kp * error + Ki * integral + Kd * (error - lastError)
 
-        buggy.buggySpeedSetterUtil(dir, output, speed)
+        buggy.buggySpeedSetterUtil(True, output, speed)
 
         integral += error
         lastError = error

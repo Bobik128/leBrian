@@ -94,6 +94,10 @@ def getDir(speed: float, dist: float):
     
     return dist > 0
 
+def resetAngle():
+    rMotor.reset_angle()
+    lMotor.reset_angle()
+
 def stop():
     lMotor.hold()
     rMotor.hold()

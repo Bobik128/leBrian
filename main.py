@@ -55,8 +55,20 @@ async def timerRun():
 
 async def manuver1(turnSpeed, speed, angle):
     await pid.goForDegrees(angle, -250, speed*1.2, True)
-    await pid.turnTo(angle + 90, 3, turnSpeed * 0.8, -360, False)  
-    
+    await pid.turnTo(angle + 90, 3, turnSpeed * 0.8, -315, False)  
+
+
+async def manuver2(turnSpeed, speed, angle):
+    buggy.resetAngle()
+    await pid.goForDegrees(angle, -280, speed*1.2, True)
+    m_angle: float = buggy.rMotor.current_angle()
+    buggy.rMotor.run_at_speed(turnSpeed)
+    buggy.lMotor.run_at_speed(math.floor(turnSpeed/3.6))
+    while buggy.rMotor.current_angle() - m_angle < 450:
+        await asyncio.sleep(0.01)
+
+    await pid.goForDegrees(angle+70, 100, speed*1.2)
+
 
 async def main():
     global runMotor, backButton, angleButton
@@ -85,32 +97,51 @@ async def main():
     speed: int = 300
     turnSpeed: int = 300
 
-    await pid.turnTo(50, 3, turnSpeed, -200, False)
-    await pid.goTilLine(60, speed, False)
-    await pid.turnTo(70, 3, turnSpeed, -200, False)
-    await pid.goForDegrees(75, 290, speed, False)
-    await pid.turnTo(90, 3, turnSpeed, -200)
+    await pid.turnTo(60, 3, turnSpeed, -200, False)
+    await pid.goForDegrees(65, 200, speed, False)
+    await pid.goForDegrees(30, 320, speed)
+    await pid.goTilButton(90, speed, backButton, 0.1)
     await asyncio.sleep(1)
 
-    await pid.goTilLine(90, -speed, True)
-    await pid.turnTo(120, 3, turnSpeed)
-    await pid.goForDegrees(120, 230, speed, False)
-    await pid.turnTo(180, 3, turnSpeed, -450, False)
-    buggy.rMotor.reset_angle()
-    buggy.lMotor.reset_angle()
-    await pid.goForDegrees(180, 860, speed)
+    await manuver2(turnSpeed, speed, 90)
+
+    await pid.goTilButton(180, speed, backButton, 0.1)
+
     await asyncio.sleep(1)
 
-    await manuver1(turnSpeed, speed, 180)
-    await pid.goTilLine(270, speed, False)
-    await asyncio.sleep(0.2)
-    await pid.goTilLine(270, speed, False)
-    await asyncio.sleep(0.2)
-    await pid.goTilLine(270, speed, False)
-    await pid.goForDegrees(270, 200, speed, True)
-    await asyncio.sleep(1)
+    await pid.goForDegrees(180, -700, speed*2, True)
+    await pid.turnTo(210, 3, turnSpeed * 0.8, -320, False)  
+    await pid.goForDegrees(210, 520, speed, False)
+    await pid.goForDegrees(230, 100, speed, False)
+    await pid.goForDegrees(250, 120, speed, False)
+    await pid.goTilButton(270, speed, backButton, 0.1)
 
-    await manuver1(turnSpeed, speed, 270)
+    await manuver2(turnSpeed, speed, 270)
+    await pid.goForDegrees(360, 800, speed)
+    # await pid.goTilLine(60, speed, False)
+    # await pid.turnTo(70, 3, turnSpeed, -200, False)
+    # await pid.goForDegrees(75, 290, speed, False)
+    # await pid.turnTo(90, 3, turnSpeed, -200)
+    # await asyncio.sleep(1)
+
+    # await pid.goTilLine(90, -speed, True)
+    # await pid.turnTo(120, 3, turnSpeed)
+    # await pid.goForDegrees(120, 230, speed, False)
+    # await pid.turnTo(180, 3, turnSpeed, -450, False)
+    # buggy.resetAngle()
+    # await pid.goForDegrees(180, 860, speed)
+    # await asyncio.sleep(1)
+
+    # await manuver1(turnSpeed, speed, 180)
+    # await pid.goTilLine(270, speed, False)
+    # await asyncio.sleep(0.2)
+    # await pid.goTilLine(270, speed, False)
+    # await asyncio.sleep(0.2)
+    # await pid.goTilLine(270, speed, False)
+    # await pid.goForDegrees(270, 200, speed, True)
+    # await asyncio.sleep(1)
+
+    # await manuver1(turnSpeed, speed, 270)
 
     # await resetRollerPos()
 
