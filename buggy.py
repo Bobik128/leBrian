@@ -22,9 +22,7 @@ async def moveTank(lSpeed: int, rSpeed: int, dist: float):
         
         await asyncio.sleep(0.01) 
 
-    lMotor.hold()
-    rMotor.hold()
-    print("Motors stopped")
+    stop()
 
 def getRelativeAbsAngle(startLAngle: float, startRAngle: float):
     return (abs(lMotor.current_angle() - startLAngle) + abs(rMotor.current_angle() - startRAngle)) / 2
@@ -32,7 +30,7 @@ def getRelativeAbsAngle(startLAngle: float, startRAngle: float):
 def getAbsoluteAngle():
     return (lMotor.current_angle + rMotor.current_angle) / 2
 
-async def steering(speed: float, dist: float, steering: float):
+async def steering(speed: float, dist: float, steering: float = 0):
     startLAngle = lMotor.current_angle()
     startRAngle = rMotor.current_angle()
 
@@ -42,8 +40,7 @@ async def steering(speed: float, dist: float, steering: float):
     while getRelativeAbsAngle(startLAngle, startRAngle) < abs(dist):
         await asyncio.sleep(0.01)
 
-    lMotor.hold()
-    rMotor.hold()
+    stop()
 
 def speedControler(speed: float, input: float, direction: bool):
     limitSpeed: float = speed * (3/2)
@@ -101,3 +98,7 @@ def resetAngle():
 def stop():
     lMotor.hold()
     rMotor.hold()
+
+def brake():
+    lMotor.brake()
+    rMotor.brake()

@@ -3,6 +3,7 @@ import buggy
 import brick
 import asyncio
 import math
+import time
 
 Kp: float
 Ki: float
@@ -17,6 +18,19 @@ lKi: float
 lKd: float
 
 lightTarget: int = 60
+
+def isStuck(lastCheckTime, lastError, error):
+    currentTime = time.time()
+
+    if currentTime - lastCheckTime < 1:
+        return False, lastCheckTime, lastError
+    
+    if abs(error) >= 10:
+        if lastError > 0 and lastError - error < 0:
+            return True, lastCheckTime, lastError
+        elif lastError < 0 and lastError - error > 0:
+            return True, lastCheckTime, lastError
+    return False, currentTime, error
 
 async def waitForPress():
     listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
@@ -53,16 +67,38 @@ async def goForDegrees(targetAngle: float, dist: float, speed: float, stopAtEnd:
     #startDist: float = buggy.getAbsoluteAngle()
     startLAngle = buggy.lMotor.current_angle()
     startRAngle = buggy.rMotor.current_angle()
+
     absDist: float = abs(dist)
 
     integral: float = 0
     lastError: float = 0
+
+    lastCheckTime = time.time()
+    lastStuckError = 0
+    stuck_timer_start = None
+    stuck_timeout = 3.0
 
     while buggy.getRelativeAbsAngle(startLAngle, startRAngle) < absDist:
         error: float = targetAngle + brick.gyro.angle()
         output: float = Kp * error + Ki * integral + Kd * (error - lastError)
 
         buggy.buggySpeedSetterUtil(dir, output, speed)
+
+        stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
+
+        if stuck:
+            if stuck_timer_start is None:
+                stuck_timer_start = time.time()
+            elif time.time() - stuck_timer_start > stuck_timeout:
+                print("STUCK detected, aborting.")
+                buggy.brake()
+                s: int
+                if dir: s = -speed 
+                else: s = speed
+                await buggy.moveTank(s, s, 160)
+                stuck_timer_start = None
+        else:
+            stuck_timer_start = None
 
         integral += error
         lastError = error
@@ -76,7 +112,7 @@ async def goForDegrees(targetAngle: float, dist: float, speed: float, stopAtEnd:
     if stopAtEnd: buggy.stop()
 
 
-async def goTilLine(targetAngle: float, speed: float, stopAtEnd: bool = True):
+async def goTilLine(targetAngle: float, speed: float, stopAtEnd: bool = True, timeout: float = 5):
     dir: bool = buggy.getDir(speed, 1)
     speed = abs(speed)
 
@@ -86,7 +122,9 @@ async def goTilLine(targetAngle: float, speed: float, stopAtEnd: bool = True):
     integral: float = 0
     lastError: float = 0
 
-    while brick.color.reflected_value() > 60:
+    startTime = time.time()
+
+    while brick.color.reflected_value() > 60 and time.time() - startTime < timeout:
         error: float = targetAngle + brick.gyro.angle()
         output: float = Kp * error + Ki * integral + Kd * (error - lastError)
 
@@ -104,14 +142,20 @@ async def goTilLine(targetAngle: float, speed: float, stopAtEnd: bool = True):
     if stopAtEnd: buggy.stop()
 
 
-async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchSensorEV3, stopDelay: int = 0):
+async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchSensorEV3, stopDelay: int = 0, timeout: float = 5):
     dir: bool = buggy.getDir(spd, 1)
     speed: float = abs(spd)
 
     integral: float = 0
     lastError: float = 0
+    startTime = time.time()
 
-    while not button.is_pressed():
+    lastCheckTime = time.time()
+    lastStuckError = 0
+    stuck_timer_start = None
+    stuck_timeout = 3.0
+
+    while not button.is_pressed() and time.time() - startTime < timeout:
         error: float = targetAngle + brick.gyro.angle()
         output: float = Kp * error + Ki * integral + Kd * (error - lastError)
 
@@ -120,7 +164,21 @@ async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchS
         integral += error
         lastError = error
 
-        print(brick.gyro.angle())
+        stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
+
+        if stuck:
+            if stuck_timer_start is None:
+                stuck_timer_start = time.time()
+            elif time.time() - stuck_timer_start > stuck_timeout:
+                print("STUCK detected, aborting.")
+                buggy.brake()
+                s: int
+                if dir: s = -speed 
+                else: s = speed
+                await buggy.moveTank(s, s, 160)
+                stuck_timer_start = None
+        else:
+            stuck_timer_start = None
 
         if integral < -100:
             integral = -100
@@ -223,6 +281,11 @@ async def turnTo(targetAngle: int, tolerance: int, speed: int, powerup: int = 0,
     integral: float = 0
     lastError: float = 0
 
+    lastCheckTime = time.time()
+    lastStuckError = 0
+    stuck_timer_start = None
+    stuck_timeout = 3.0
+
     print("started")
 
     while abs(targetAngle + nowDir) > tolerance:
@@ -236,14 +299,23 @@ async def turnTo(targetAngle: int, tolerance: int, speed: int, powerup: int = 0,
 
         error: float = targetAngle + nowDir
         output: float = rKp * error + rKi * integral + rKd * (error - lastError)
+        
 
-        # minSpeed: float = 0.3
-        # if output > 0:
-        #     if output < minSpeed: output = minSpeed
-        # else:
-        #     if output > -minSpeed: output = -minSpeed
+        stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
 
-        print(output)
+        if stuck:
+            if stuck_timer_start is None:
+                stuck_timer_start = time.time()
+            elif time.time() - stuck_timer_start > stuck_timeout:
+                print("STUCK detected, aborting.")
+                buggy.brake()
+                s: int
+                if dir: s = -speed 
+                else: s = speed
+                await buggy.moveTank(s, s, 160)
+                stuck_timer_start = None
+        else:
+            stuck_timer_start = None
 
         lSpeed: float = (speed + powerup) * -output
         rSpeed: float = (speed - powerup) * output

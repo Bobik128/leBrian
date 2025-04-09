@@ -9,8 +9,13 @@ import time
 import sys
 
 runMotor: motors.Motor
-backButton: sensors.EV3.TouchSensorEV3
+frontButton: sensors.EV3.TouchSensorEV3
 angleButton: sensors.EV3.TouchSensorEV3
+ressetingRoller: bool = False
+rollerStuck: bool = False
+
+runMotorSpeed: int = 1100
+
 
 async def intiAngleButton(port: sensors.SensorPort):
     global angleButton
@@ -19,25 +24,27 @@ async def intiAngleButton(port: sensors.SensorPort):
         asyncio.sleep(0.1)
 
 async def intiBackButton(port: sensors.SensorPort):
-    global backButton
-    backButton = sensors.EV3.TouchSensorEV3(port)
-    while not backButton.is_ready():
+    global frontButton
+    frontButton = sensors.EV3.TouchSensorEV3(port)
+    while not frontButton.is_ready():
         asyncio.sleep(0.1)
 
-async def resetRollerPos(speed: int = 1100):
-    global runMotor, angleButton
+async def resetRollerPos(speed: int = runMotorSpeed):
+    global runMotor, angleButton, ressetingRoller, rollerStuck
+    ressetingRoller = True
     runMotor.run_at_speed(-abs(speed))
 
-    while not angleButton.is_pressed():
+    while not angleButton.is_pressed() or rollerStuck:
         await asyncio.sleep(0.01)
 
-    while angleButton.is_pressed():
+    while angleButton.is_pressed() or rollerStuck:
         await asyncio.sleep(0.01)
     
     runMotor.hold()
 
     runMotor.rotate_by_angle(-300, abs(speed))
     runMotor.hold()
+    ressetingRoller = False
 
 async def waitForPress():
     listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
@@ -52,6 +59,34 @@ async def timerRun():
         await asyncio.sleep(0.01)
 
     sys.exit()
+
+async def sMotorStuckDetector():
+    global runMotor, angleButton, rollerStuck, ressetingRoller
+    stuckDelay: float = 3
+    lastChangeTime = time.time() 
+    isPressed: bool = angleButton.is_pressed()
+    while True:
+        if isPressed != angleButton.is_pressed():
+            lastChangeTime = time.time() 
+            isPressed = angleButton.is_pressed()
+
+        if runMotor.current_speed() > 5 and time.time() - lastChangeTime > stuckDelay:
+            rollerStuck = True
+            print("small motor stuck")
+            runMotor.brake()
+            runMotor.run_at_speed(600)
+            await asyncio.sleep(0.5)
+            runMotor.hold()
+            runMotor.run_at_speed(-runMotorSpeed)
+            rollerStuck = False
+            lastChangeTime = time.time()
+        else:
+            lastChangeTime = time.time() 
+            rollerStuck = False
+
+        await asyncio.sleep(0.02)
+
+
 
 async def manuver1(turnSpeed, speed, angle):
     await pid.goForDegrees(angle, -250, speed*1.2, True)
@@ -69,9 +104,8 @@ async def manuver2(turnSpeed, speed, angle):
 
     await pid.goForDegrees(angle+70, 100, speed*1.2)
 
-
-async def main():
-    global runMotor, backButton, angleButton
+async def initRun():
+    global runMotor, frontButton, angleButton
     runMotor = motors.Motor(motors.MotorPort.C)
     buggy.init(motors.MotorPort.B, motors.MotorPort.A)
     await intiBackButton(sensors.SensorPort.S2)
@@ -93,9 +127,12 @@ async def main():
     await waitForPress()
     await asyncio.sleep(0.1)
     print("Started!")
-    timerRun()
 
-    runMotor.run_at_speed(-1100)
+async def robotRun():
+    global runMotor, frontButton, angleButton
+    await initRun()
+
+    runMotor.run_at_speed(-runMotorSpeed)
 
     speed: int = 360
     turnSpeed: int = 250
@@ -106,12 +143,12 @@ async def main():
     await pid.goForDegrees(65, 200, speed, False)
     await pid.goForDegrees(30, 320, speed, False)
     await pid.goForDegrees(70, 100, speed)
-    await pid.goTilButton(90, speed, backButton, 0.1)
+    await pid.goTilButton(90, speed, frontButton, 0.1)
     await asyncio.sleep(1)
 
     await manuver2(turnSpeed, speed, 90)
 
-    await pid.goTilButton(177, speed, backButton, 0.1)
+    await pid.goTilButton(177, speed, frontButton, 0.1)
 
     await asyncio.sleep(1)
 
@@ -120,7 +157,7 @@ async def main():
     await pid.goForDegrees(210, 620, speed, False)
     await pid.goForDegrees(230, 80, speed, False)
     await pid.goForDegrees(260, 200, speed, False)
-    await pid.goTilButton(268, speed, backButton, 0.1)
+    await pid.goTilButton(268, speed, frontButton, 0.1)
 
     await asyncio.sleep(1)
 
@@ -133,6 +170,13 @@ async def main():
     await pid.turnTo(410, 3, turnSpeed, -200)
     await pid.goForDegrees(410, 600, speed)
 
+async def main():
+    global runMotor, frontButton, angleButton
+    timerTask = asyncio.create_task(timerRun())
+    robotRunTask = asyncio.create_task(robotRun())
+    sMotorStuckDetectorTask = asyncio.create_task(sMotorStuckDetector())
+
+    await asyncio.gather(timerTask, robotRunTask, sMotorStuckDetectorTask)
 
 
 asyncio.run(main())
