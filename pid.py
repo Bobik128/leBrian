@@ -12,6 +12,30 @@ rKp: float
 rKi: float
 rKd: float
 
+lKp: float
+lKi: float
+lKd: float
+
+lightTarget: int = 60
+
+async def waitForPress():
+    listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
+    while True:
+        knob: uicontrol.UiEventsListener.KnobEvent = listener.knob_event_since_last()
+        if knob.just_pressed:
+            break
+
+async def initLineFollower(p, i, d):
+    global lightTarget, lKp, lKi, lKd
+    lKp = p
+    lKi = i
+    lKd = d
+    brick.color
+    brick.color.reflected_value()
+    print("Init color")
+    await waitForPress()
+    lightTarget = brick.color.reflected_value()
+
 def init(kp: float, ki: float, kd: float, rkp: float, rki: float, rkd: float):
     global Kp, Ki, Kd, rKp, rKi, rKd
     Kp = kp
@@ -108,7 +132,50 @@ async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchS
     await asyncio.sleep(stopDelay)
     buggy.stop()
 
-async def lineFollower(target: float, speed: float):
+async def lineFollowerWithGyro(angle: int, speed: float, dist: int):
+    global lightTarget
+    speed = abs(speed)
+
+    brick.color
+    brick.color.reflected_value()
+
+    startLAngle = buggy.lMotor.current_angle()
+    startRAngle = buggy.rMotor.current_angle()
+    absDist: float = abs(dist)
+
+    await asyncio.sleep(0.5)
+
+    integral: float = 0
+    lastError: float = 0
+
+    while buggy.getRelativeAbsAngle(startLAngle, startRAngle) < absDist:
+        error: float = lightTarget - brick.color.reflected_value()
+        output: float = lKp * error + lKi * integral + lKd * (error - lastError)
+
+        if brick.gyro.angle() + angle > 5 and output > 0:
+            output = 0
+            error = 0
+        elif brick.gyro.angle() + angle < -5 and output < 0:
+            output = 0
+            error = 0
+
+        buggy.buggySpeedSetterUtil(True, -output, speed)
+
+        integral += error
+        lastError = error
+
+        print(brick.color.reflected_value())
+
+        if integral < -100:
+            integral = -100
+        elif integral > 100:
+            integral = 100
+
+
+        await asyncio.sleep(0.01)
+
+async def lineFollowerWithGyroTilButton(angle: int, speed: float, button: sensors.EV3.TouchSensorEV3, delay: float):
+    global lightTarget
     speed = abs(speed)
 
     brick.color
@@ -119,11 +186,16 @@ async def lineFollower(target: float, speed: float):
     integral: float = 0
     lastError: float = 0
 
-    while True:
-        error: float = target - brick.color.reflected_value()
-        output: float = Kp * error + Ki * integral + Kd * (error - lastError)
+    while not button.is_pressed():
+        error: float = lightTarget - brick.color.reflected_value()
+        output: float = lKp * error + lKi * integral + lKd * (error - lastError)
 
-        buggy.buggySpeedSetterUtil(True, output, speed)
+        if brick.gyro.angle() + angle > 5 and output > 0:
+            output = 0
+        elif brick.gyro.angle() + angle < -5 and output < 0:
+            output = 0
+
+        buggy.buggySpeedSetterUtil(True, -output, speed)
 
         integral += error
         lastError = error
