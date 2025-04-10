@@ -25,11 +25,11 @@ def isStuck(lastCheckTime, lastError, error):
     if currentTime - lastCheckTime < 1:
         return False, lastCheckTime, lastError
     
-    if abs(error) >= 10:
-        if lastError > 0 and lastError - error < 0:
-            return True, lastCheckTime, lastError
-        elif lastError < 0 and lastError - error > 0:
-            return True, lastCheckTime, lastError
+    if abs(error) >= 20:
+        if lastError > 0 and lastError - error < 5:
+            return True, currentTime, error
+        elif lastError < 0 and lastError - error > -5:
+            return True, currentTime, error
     return False, currentTime, error
 
 async def waitForPress():
@@ -87,16 +87,13 @@ async def goForDegrees(targetAngle: float, dist: float, speed: float, stopAtEnd:
         stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
 
         if stuck:
-            if stuck_timer_start is None:
-                stuck_timer_start = time.time()
-            elif time.time() - stuck_timer_start > stuck_timeout:
-                print("STUCK detected, aborting.")
-                buggy.brake()
-                s: int
-                if dir: s = -speed 
-                else: s = speed
-                await buggy.moveTank(s, s, 160)
-                stuck_timer_start = None
+            print("STUCK detected, aborting.")
+            buggy.brake()
+            s: int
+            if dir: s = -speed 
+            else: s = speed
+            await buggy.moveTank(s, s, 160)
+            stuck_timer_start = None
         else:
             stuck_timer_start = None
 
@@ -142,7 +139,7 @@ async def goTilLine(targetAngle: float, speed: float, stopAtEnd: bool = True, ti
     if stopAtEnd: buggy.stop()
 
 
-async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchSensorEV3, stopDelay: int = 0, timeout: float = 5):
+async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchSensorEV3, stopDelay: int = 0, timeout: float = 8):
     dir: bool = buggy.getDir(spd, 1)
     speed: float = abs(spd)
 
@@ -167,16 +164,13 @@ async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchS
         stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
 
         if stuck:
-            if stuck_timer_start is None:
-                stuck_timer_start = time.time()
-            elif time.time() - stuck_timer_start > stuck_timeout:
-                print("STUCK detected, aborting.")
-                buggy.brake()
-                s: int
-                if dir: s = -speed 
-                else: s = speed
-                await buggy.moveTank(s, s, 160)
-                stuck_timer_start = None
+            print("STUCK detected, aborting.")
+            buggy.brake()
+            s: int
+            if dir: s = -speed 
+            else: s = speed
+            await buggy.moveTank(s, s, 160)
+            stuck_timer_start = None
         else:
             stuck_timer_start = None
 
@@ -304,16 +298,11 @@ async def turnTo(targetAngle: int, tolerance: int, speed: int, powerup: int = 0,
         stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
 
         if stuck:
-            if stuck_timer_start is None:
-                stuck_timer_start = time.time()
-            elif time.time() - stuck_timer_start > stuck_timeout:
-                print("STUCK detected, aborting.")
-                buggy.brake()
-                s: int
-                if dir: s = -speed 
-                else: s = speed
-                await buggy.moveTank(s, s, 160)
-                stuck_timer_start = None
+            print("STUCK detected, aborting.")
+            buggy.brake()
+            s: int = -speed 
+            await buggy.moveTank(s, s, 160)
+            stuck_timer_start = None
         else:
             stuck_timer_start = None
 

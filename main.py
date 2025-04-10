@@ -92,6 +92,11 @@ async def manuver1(turnSpeed, speed, angle):
     await pid.goForDegrees(angle, -250, speed*1.2, True)
     await pid.turnTo(angle + 90, 3, turnSpeed * 0.8, -315, False)  
 
+async def wiggleBackward():
+    await buggy.moveTank(-600, -600, 80)
+    await buggy.moveTank(600, 600, 80)
+    await buggy.moveTank(-600, -600, 80)
+    await buggy.moveTank(600, 600, 80)
 
 async def manuver2(turnSpeed, speed, angle):
     buggy.resetAngle()
@@ -144,13 +149,15 @@ async def robotRun():
     await pid.goForDegrees(30, 320, speed, False)
     await pid.goForDegrees(70, 100, speed)
     await pid.goTilButton(90, speed, frontButton, 0.1)
-    await asyncio.sleep(1)
+    await wiggleBackward()
+    await asyncio.sleep(0.5)
 
     await manuver2(turnSpeed, speed, 90)
 
     await pid.goTilButton(177, speed, frontButton, 0.1)
 
-    await asyncio.sleep(1)
+    await wiggleBackward()
+    await asyncio.sleep(0.5)
 
     await pid.goForDegrees(175, -800, speed*1.5, True)
     await pid.turnTo(210, 3, turnSpeed * 0.8, -320, False)  
@@ -159,16 +166,21 @@ async def robotRun():
     await pid.goForDegrees(260, 200, speed, False)
     await pid.goTilButton(268, speed, frontButton, 0.1)
 
-    await asyncio.sleep(1)
+    await wiggleBackward()
+    await asyncio.sleep(0.5)
 
     await pid.goForDegrees(265, -1000, speed*1.5, True)
-    await pid.turnTo(320, 3, turnSpeed * 0.8, -320)  
-    await pid.goForDegrees(320, 800, speed, False) 
-    await pid.goForDegrees(358, 600, speed)
+    await pid.turnTo(290, 3, turnSpeed * 0.8, -320, False)  
+    await pid.goTilButton(290, speed, frontButton, 0.1)
     await asyncio.sleep(1)
-    await pid.goForDegrees(352, -600, speed)
-    await pid.turnTo(410, 3, turnSpeed, -200)
-    await pid.goForDegrees(410, 600, speed)
+    await pid.goForDegrees(270, -800, speed*1.5) 
+    await pid.turnTo(300, 3, turnSpeed * 0.8, -320, False) 
+    await pid.goForDegrees(300, 500, speed, False)
+    await pid.goForDegrees(360, 200, speed, False)
+    await wiggleBackward()
+    await asyncio.sleep(0.5)
+    
+    await manuver2(turnSpeed, speed, 360)
 
 async def main():
     global runMotor, frontButton, angleButton
