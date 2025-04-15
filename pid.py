@@ -92,7 +92,7 @@ async def goForDegrees(targetAngle: float, dist: float, speed: float, stopAtEnd:
             s: int
             if dir: s = -speed 
             else: s = speed
-            await buggy.moveTank(s, s, 160)
+            await buggy.moveTank(s, s, 80)
             stuck_timer_start = None
         else:
             stuck_timer_start = None
@@ -139,7 +139,7 @@ async def goTilLine(targetAngle: float, speed: float, stopAtEnd: bool = True, ti
     if stopAtEnd: buggy.stop()
 
 
-async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchSensorEV3, stopDelay: int = 0, timeout: float = 8):
+async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchSensorEV3, stopDelay: int = 0, timeout: float = 7):
     dir: bool = buggy.getDir(spd, 1)
     speed: float = abs(spd)
 
@@ -169,7 +169,7 @@ async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchS
             s: int
             if dir: s = -speed 
             else: s = speed
-            await buggy.moveTank(s, s, 160)
+            await buggy.moveTank(s, s, 80)
             stuck_timer_start = None
         else:
             stuck_timer_start = None
@@ -216,8 +216,6 @@ async def lineFollowerWithGyro(angle: int, speed: float, dist: int):
         integral += error
         lastError = error
 
-        print(brick.color.reflected_value())
-
         if integral < -100:
             integral = -100
         elif integral > 100:
@@ -252,8 +250,6 @@ async def lineFollowerWithGyroTilButton(angle: int, speed: float, button: sensor
         integral += error
         lastError = error
 
-        print(brick.color.reflected_value())
-
         if integral < -100:
             integral = -100
         elif integral > 100:
@@ -267,7 +263,6 @@ async def turnTo(targetAngle: int, tolerance: int, speed: int, powerup: int = 0,
     dir: bool = False
 
     nowDir: int = brick.gyro.angle()
-    print(nowDir)
 
     if nowDir == targetAngle:
         return
@@ -280,7 +275,6 @@ async def turnTo(targetAngle: int, tolerance: int, speed: int, powerup: int = 0,
     stuck_timer_start = None
     stuck_timeout = 3.0
 
-    print("started")
 
     while abs(targetAngle + nowDir) > tolerance:
         nowDir = brick.gyro.angle()
@@ -301,7 +295,7 @@ async def turnTo(targetAngle: int, tolerance: int, speed: int, powerup: int = 0,
             print("STUCK detected, aborting.")
             buggy.brake()
             s: int = -speed 
-            await buggy.moveTank(s, s, 160)
+            await buggy.moveTank(s, s, 80)
             stuck_timer_start = None
         else:
             stuck_timer_start = None
