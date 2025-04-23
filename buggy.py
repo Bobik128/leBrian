@@ -96,8 +96,10 @@ def resetAngle():
     lMotor.reset_angle()
 
 def stop():
-    lMotor.hold()
-    rMotor.hold()
+    # lMotor.hold()
+    # rMotor.hold()
+    lMotor.brake()
+    rMotor.brake()
 
 def brake():
     lMotor.brake()

@@ -92,7 +92,7 @@ async def goForDegrees(targetAngle: float, dist: float, speed: float, stopAtEnd:
             s: int
             if dir: s = -speed 
             else: s = speed
-            await buggy.moveTank(s, s, 80)
+            await buggy.moveTank(s, s, 120)
             stuck_timer_start = None
         else:
             stuck_timer_start = None
@@ -169,7 +169,7 @@ async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchS
             s: int
             if dir: s = -speed 
             else: s = speed
-            await buggy.moveTank(s, s, 80)
+            await buggy.moveTank(s, s, 120)
             stuck_timer_start = None
         else:
             stuck_timer_start = None
@@ -295,7 +295,7 @@ async def turnTo(targetAngle: int, tolerance: int, speed: int, powerup: int = 0,
             print("STUCK detected, aborting.")
             buggy.brake()
             s: int = -speed 
-            await buggy.moveTank(s, s, 80)
+            await buggy.moveTank(s, s, 120)
             stuck_timer_start = None
         else:
             stuck_timer_start = None
