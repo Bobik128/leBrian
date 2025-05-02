@@ -19,6 +19,8 @@ async def moveTank(lSpeed: float, rSpeed: float, dist: float):
     rMotor.run_at_speed(math.floor(rSpeed))
 
     while getRelativeAbsAngle(startLAngle, startRAngle) < abs(dist):
+        lMotor.run_at_speed(math.floor(lSpeed))
+        rMotor.run_at_speed(math.floor(rSpeed))
         
         await asyncio.sleep(0.01) 
 
