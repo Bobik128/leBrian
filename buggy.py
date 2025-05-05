@@ -11,20 +11,19 @@ def init(leftMotor: motors.MotorPort, rightMotor: motors.MotorPort):
     lMotor = motors.Motor(leftMotor)
     rMotor = motors.Motor(rightMotor)
 
-async def moveTank(lSpeed: float, rSpeed: float, dist: float):
+async def moveTank(lSpeed: float, rSpeed: float, dist: float, stopBool: bool = True):
+    global lMotor, rMotor
     startLAngle = lMotor.current_angle()
     startRAngle = rMotor.current_angle()
 
     lMotor.run_at_speed(math.floor(lSpeed))
     rMotor.run_at_speed(math.floor(rSpeed))
 
+    # while getRelativeAbsAngle(startLAngle, startRAngle) < abs(dist):
     while getRelativeAbsAngle(startLAngle, startRAngle) < abs(dist):
-        lMotor.run_at_speed(math.floor(lSpeed))
-        rMotor.run_at_speed(math.floor(rSpeed))
-        
         await asyncio.sleep(0.01) 
 
-    stop()
+    if stopBool: stop()
 
 def getRelativeAbsAngle(startLAngle: float, startRAngle: float):
     return (abs(lMotor.current_angle() - startLAngle) + abs(rMotor.current_angle() - startRAngle)) / 2
