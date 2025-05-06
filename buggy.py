@@ -36,7 +36,7 @@ async def steering(speed: float, dist: float, steering: float = 0):
     startRAngle = rMotor.current_angle()
 
     dir = getDir(speed, dist)
-    buggySpeedSetterUtil(dir, steering, speed)
+    buggySpeedSetterUtil(dir, steering, abs(speed))
 
     while getRelativeAbsAngle(startLAngle, startRAngle) < abs(dist):
         await asyncio.sleep(0.01)

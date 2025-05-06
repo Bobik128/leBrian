@@ -56,6 +56,15 @@ async def waitForPress():
         if knob.just_pressed:
             break
 
+async def waitForPressWithGyroCheck():
+    listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
+    while True:
+        if abs(brick.gyro.angle()) > 5:
+            print("GYRO DRIFT")
+        knob: uicontrol.UiEventsListener.KnobEvent = listener.knob_event_since_last()
+        if knob.just_pressed:
+            break
+
 async def play(freq, duration):
     """
     :param freq: note freq Hz
@@ -170,10 +179,11 @@ async def initRun():
     print("No                    Yes")
     throw: int = await waitForAnyPress()
     overBrick = (throw == 1 or throw == 3)
+    if prog == 4: overBrick = False
     print("")
     print("Start")
 
-    await waitForPress()
+    await waitForPressWithGyroCheck()
     startTime = time.time()
     await asyncio.sleep(0.1)
     print("Started!")
@@ -184,12 +194,17 @@ async def robotRun():
     global runMotor, frontButton, angleButton, overBrick
     prog: int = await initRun()
 
+    if prog == 3:
+        await theDrive(300)
+        return
+
     runMotor.run_at_speed(-runMotorSpeed)
 
     speed: int = 400
     fastSpeed: int = 560
     ultraFastSpeed: int = 700
     turnSpeed: int = 280
+    turnSpeedSlow: int = 230
 
     # await pid.lineFollowerWithGyroTilButton(0, speed, backButton, 0.1)
 
@@ -246,83 +261,61 @@ async def robotRun():
             while time.time() - startTime < 82:
                 await asyncio.sleep(0.1)
         
-        await pid.goForDegrees(360, -50, fastSpeed, False)
+        await pid.goForDegrees(360, -150, fastSpeed, False)
         
-        if not overBrick:
+        a: int = 540
+
+        if not overBrick or prog == 4:
             await pid.goForDegrees(450, 800, fastSpeed)
             
-            p1 = asyncio.create_task(pid.turnTo(540, 3, turnSpeed, 0))
-            p2 = asyncio.create_task(resetRollerPos())
-
-            await asyncio.gather(p1, p2)
-            await pid.goForDegrees(540, -600, speed, False)
+            p1 = asyncio.create_task(pid.turnTo(540, 3, turnSpeedSlow, 0))
+            a = 540
         else:
-            p1 = asyncio.create_task(buggy.moveTank(-1100, -100, 600))
-            p2 = asyncio.create_task(resetRollerPos())
+            a = 530
+            p1 = asyncio.create_task(buggy.moveTank(-1100, -200, 600))
 
-            await asyncio.gather(p1, p2)
-            await pid.goForDegrees(180, -600, speed, False)
+        p2 = asyncio.create_task(resetRollerPos())
+        await asyncio.gather(p1, p2)
+        await pid.goForDegrees(a, -500, speed, False)
+        await pid.goForDegrees(540, -100, speed, False)
 
         if prog == 1:
-            if not overBrick:
-                await asyncio.sleep(2)
-                await pid.goForDegrees(540, 100, speed)
-                await pid.goForDegrees(540, -150, speed)
-            else:
-                await asyncio.sleep(2)
-                await pid.goForDegrees(180, 100, speed)
-                await pid.goForDegrees(180, -150, speed)
+            await asyncio.sleep(2)
+            await pid.goForDegrees(540, 100, speed)
+            await pid.goForDegrees(540, -150, speed)
         else:
             await asyncio.sleep(0.5)
             buggy.stop()
             # await pid.goForDegrees(540, 80, ultraFastSpeed, False)
-            dist: int = 700
+            dist: int = 600
 
-            p3
-            p4
-
-            if not overBrick:
-                buggy.resetAngle()
-                await buggy.moveTank(320, 1100, dist*2/3, False)
-                runMotor.run_at_speed(-runMotorSpeed)
-                buggy.resetAngle()
-                await buggy.moveTank(320, 1100, dist*3/4)
-            
-                # await pid.goForDegrees(630, 860, ultraFastSpeed, False)
-                # await pid.goForDegrees(720, 160, ultraFastSpeed)
-
-                p3 = asyncio.create_task(buggy.moveTank(-200, -1100, dist))
-                p4 = asyncio.create_task(resetRollerPos())
-            else:
-                buggy.resetAngle()
-                await buggy.moveTank(1100, 320, dist*2/3, False)
-                runMotor.run_at_speed(-runMotorSpeed)
-                buggy.resetAngle()
-                await buggy.moveTank(1100, 320, dist*3/4)
-            
-                # await pid.goForDegrees(630, 860, ultraFastSpeed, False)
-                # await pid.goForDegrees(720, 160, ultraFastSpeed)
-
-                p3 = asyncio.create_task(buggy.moveTank(-1100, -200, dist))
-                p4 = asyncio.create_task(resetRollerPos())
+            buggy.resetAngle()
+            await buggy.moveTank(320, 1100, dist*2/3, False)
+            runMotor.run_at_speed(-runMotorSpeed)
+            buggy.resetAngle()
+            await buggy.moveTank(320, 1100, dist*3/4)
+        
+            # await pid.goForDegrees(630, 860, ultraFastSpeed, False)
+            # await pid.goForDegrees(720, 160, ultraFastSpeed)
 
             while time.time() - startTime < 85:
                 await asyncio.sleep(0.1)
 
             buggy.resetAngle()
+
+            p3 = asyncio.create_task(theDrive(300))
+            p4 = asyncio.create_task(resetRollerPos())
             await asyncio.gather(p3, p4)
             # await resetRollerPos()
+
+            # await buggy.moveTank(-200, -900, 100, True)
+            # buggy.brake()
+            # await resetRollerPos()
             # await buggy.moveTank(-200, -1100, dist)
-            if not overBrick:
-                await pid.goForDegrees(540, -100, fastSpeed, False)
-                await asyncio.sleep(1.5)
-                await pid.goForDegrees(540, 100, speed)
-                await pid.goForDegrees(540, -150, speed)
-            else:
-                await pid.goForDegrees(180, -100, fastSpeed, False)
-                await asyncio.sleep(1.5)
-                await pid.goForDegrees(180, 100, speed)
-                await pid.goForDegrees(180, -150, speed)
+            await pid.goForDegrees(540, -100, fastSpeed, False)
+            await asyncio.sleep(1)
+            await pid.goForDegrees(540, 100, speed)
+            await pid.goForDegrees(540, -150, speed)
 
     elif prog == 2:
         angle = 360
@@ -383,6 +376,9 @@ async def main():
     robotRunTask = asyncio.create_task(robotRun())
 
     await asyncio.gather(robotRunTask)
+
+async def theDrive(dist):
+    await buggy.steering(-600, 600, 30)
 
 
 asyncio.run(main())
