@@ -139,6 +139,13 @@ async def wiggleBackward():
     # await buggy.moveTank(-speed, -speed, dist)
     # await buggy.moveTank(speed, speed, dist + 10)
 
+async def wiggleBackwardStable():
+    speed: int = 160
+    dist: int = 40
+    while True:
+        await buggy.moveTank(-speed, -speed, dist)
+        await buggy.moveTank(speed, speed, dist)
+
 async def manuver2(turnSpeed, speed, angle):
     buggy.resetAngle()
     await pid.goForDegrees(angle-2, -285, speed*1.2, True)
@@ -194,9 +201,9 @@ async def robotRun():
     global runMotor, frontButton, angleButton, overBrick
     prog: int = await initRun()
 
-    if prog == 3:
-        await theDrive(300)
-        return
+    # if prog == 3:
+    #     await theDrive(500)
+    #     return
 
     runMotor.run_at_speed(-runMotorSpeed)
 
@@ -242,11 +249,32 @@ async def robotRun():
     await pid.turnTo(300, 3, turnSpeed * 0.8, -320, False) 
     await pid.goForDegrees(300, 550, speed, False)
     await pid.goForDegrees(330, 300, speed, False)
-    await pid.goTilButton(360, speed * 0.8, frontButton, 0)
+    await pid.goTilButton(360, speed * 0.8, frontButton, 0, 4)
     await asyncio.sleep(1.2)
 
     if prog == 3:
-        await unload(fastSpeed, turnSpeed, speed)
+        # await unload(fastSpeed, turnSpeed, speed)
+        await pid.goForDegrees(300, -1000, fastSpeed)
+        await pid.turnTo(440, 3, turnSpeed, 0, False)
+        await pid.goForDegrees(450, 700, fastSpeed)
+        await pid.turnTo(360, 3, turnSpeed)
+        await pid.goForDegrees(360, 50, speed)
+        vygll = asyncio.create_task(wiggleBackwardStable())
+
+        while time.time() - startTime < 82:
+                await asyncio.sleep(0.1)
+
+        vygll.cancel()
+        p5 = asyncio.create_task(pid.turnTo(200, 3, turnSpeed))
+        p6 = asyncio.create_task(resetRollerPos())
+        await asyncio.gather(p5, p6)
+        await pid.goForDegrees(210, -500, fastSpeed, False)
+        await pid.goForDegrees(180, -200, fastSpeed, False)
+        await asyncio.sleep(2)
+        await pid.goForDegrees(180, 100, speed)
+        await pid.goForDegrees(180, -150, speed)
+
+
     elif prog == 1 or prog == 4:
         await pid.goForDegrees(300, -600, fastSpeed)
         await pid.turnTo(410, 3, turnSpeed, 0, False)
@@ -254,6 +282,8 @@ async def robotRun():
         await pid.turnTo(360, 3, turnSpeed)
         await pid.goForDegrees(360, 200, speed)
 
+
+        vigll = asyncio.create_task(wiggleBackwardStable())
         if prog == 4:
             while time.time() - startTime < 72:
                 await asyncio.sleep(0.1)
@@ -261,6 +291,7 @@ async def robotRun():
             while time.time() - startTime < 82:
                 await asyncio.sleep(0.1)
         
+        vigll.cancel()
         await pid.goForDegrees(360, -150, fastSpeed, False)
         
         a: int = 540
@@ -284,26 +315,28 @@ async def robotRun():
             await pid.goForDegrees(540, 100, speed)
             await pid.goForDegrees(540, -150, speed)
         else:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.6)
             buggy.stop()
             # await pid.goForDegrees(540, 80, ultraFastSpeed, False)
-            dist: int = 600
+            dist: int = 550
 
             buggy.resetAngle()
-            await buggy.moveTank(320, 1100, dist*2/3, False)
+            await buggy.moveTank(330, 1100, dist*2/3, False)
             runMotor.run_at_speed(-runMotorSpeed)
             buggy.resetAngle()
-            await buggy.moveTank(320, 1100, dist*3/4)
+            await buggy.moveTank(330, 1100, dist*3/4)
         
             # await pid.goForDegrees(630, 860, ultraFastSpeed, False)
             # await pid.goForDegrees(720, 160, ultraFastSpeed)
 
+            vigl = asyncio.create_task(wiggleBackwardStable())
             while time.time() - startTime < 85:
                 await asyncio.sleep(0.1)
 
+            vigl.cancel()
             buggy.resetAngle()
 
-            p3 = asyncio.create_task(theDrive(300))
+            p3 = asyncio.create_task(theDrive(580))
             p4 = asyncio.create_task(resetRollerPos())
             await asyncio.gather(p3, p4)
             # await resetRollerPos()
@@ -312,14 +345,14 @@ async def robotRun():
             # buggy.brake()
             # await resetRollerPos()
             # await buggy.moveTank(-200, -1100, dist)
-            await pid.goForDegrees(540, -100, fastSpeed, False)
-            await asyncio.sleep(1)
-            await pid.goForDegrees(540, 100, speed)
-            await pid.goForDegrees(540, -150, speed)
+            await pid.goForDegrees(540, -600, fastSpeed, False)
+            await asyncio.sleep(2)
+            # await pid.goForDegrees(540, 100, speed)
+            # await pid.goForDegrees(540, -150, speed)
 
     elif prog == 2:
         angle = 360
-        await pid.goForDegrees(angle, -60, speed)
+        await pid.goForDegrees(angle, -160, speed)
         for i in range(4):
             await manuver2(turnSpeed, speed, angle)
             angle = 90 + angle
@@ -330,26 +363,40 @@ async def robotRun():
             await pid.goTilButton(angle - 3, fastSpeed, frontButton, 0.05, timeout)
             await wiggleBackward()
             await asyncio.sleep(0.8)
-        
-        await pid.goForDegrees(angle - 8, -600, fastSpeed, False)
+        if not overBrick:
+            await pid.goForDegrees(angle - 8, -600, fastSpeed, False)
+        else:
+            await pid.goForDegrees(angle - 8, -800, fastSpeed, False)
         await manuver2(turnSpeed, speed, angle)
-        await pid.goTilButton(angle + 90, fastSpeed, frontButton, 0.05)
+        await pid.goTilButton(angle + 90, 600, frontButton, 0.05)
         await wiggleBackward()
         await asyncio.sleep(0.8)
-        await pid.goForDegrees(angle + 90, -500, fastSpeed)
-        
-        p1 = asyncio.create_task(pid.turnTo(angle + 180, 3, turnSpeed, 0))
+
+        if not overBrick:
+            await pid.goForDegrees(angle + 90, -500, fastSpeed)
+            p1 = asyncio.create_task(pid.turnTo(angle + 180, 3, turnSpeed, 0))
+        else:
+            await pid.goForDegrees(angle + 90, -140, fastSpeed)
+            p1 = asyncio.create_task(pid.turnTo(angle + 195, 3, turnSpeed, 0))
+
         p2 = asyncio.create_task(resetRollerPos())
 
         await asyncio.gather(p1, p2)
 
-        while time.time() - startTime < 82:
+        while time.time() - startTime < 83:
             await asyncio.sleep(0.1)
 
-        await pid.goForDegrees(angle + 180, -600, speed, False)
-        await asyncio.sleep(2)
-        await pid.goForDegrees(angle + 180, 100, speed)
-        await pid.goForDegrees(angle + 180, -150, speed)
+        if not overBrick:
+            await pid.goForDegrees(angle + 180, -600, fastSpeed, False)
+            await asyncio.sleep(2)
+            await pid.goForDegrees(angle + 180, 100, speed)
+            await pid.goForDegrees(angle + 180, -150, speed)
+        else:
+            await pid.goForDegrees(angle + 197, -600, fastSpeed, False)
+            await pid.goForDegrees(angle + 180, -200, fastSpeed, False)
+            await asyncio.sleep(2)
+            await pid.goForDegrees(angle + 180, 100, speed)
+            await pid.goForDegrees(angle + 180, -150, speed)
 
     buggy.stop()
 
@@ -378,7 +425,9 @@ async def main():
     await asyncio.gather(robotRunTask)
 
 async def theDrive(dist):
-    await buggy.steering(-600, 600, 30)
-
+    buggy.resetAngle()
+    await buggy.moveTank(-330, -1100, dist, True)
+    buggy.lMotor.hold()
+    buggy.rMotor.hold()
 
 asyncio.run(main())

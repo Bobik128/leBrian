@@ -16,6 +16,9 @@ async def moveTank(lSpeed: float, rSpeed: float, dist: float, stopBool: bool = T
     startLAngle = lMotor.current_angle()
     startRAngle = rMotor.current_angle()
 
+    lMotor.hold()
+    rMotor.hold()
+
     lMotor.run_at_speed(math.floor(lSpeed))
     rMotor.run_at_speed(math.floor(rSpeed))
 
