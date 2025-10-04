@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "F5: Upload only (no-op)",
+      "type": "python",
+      "request": "launch",
+      "program": "/bin/true",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Upload to SD card",
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb"
+    }
+  ]
+}
