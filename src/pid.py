@@ -60,126 +60,254 @@ def init(kp: float, ki: float, kd: float, rkp: float, rki: float, rkd: float):
     rKi = rki
     rKd = rkd
 
-async def goForDegrees(targetAngle: float, dist: float, speed: float, stopAtEnd: bool = True):
-    dir: bool = buggy.getDir(speed, dist)
-    speed = abs(speed)
+# ========== GO FIXED DISTANCE ==========
+async def goForDegrees(
+    targetAngle: float,
+    dist: float,
+    speed: float,
+    stopAtEnd: bool = True,
 
-    #startDist: float = buggy.getAbsoluteAngle()
+    accelDist: float = 60.0,
+    startAccelFactor: float = 0.3,
+    decelDist: float = 140.0,
+    endDecelFactor: float = 0.35,
+):
+    dir = buggy.getDir(speed, dist)
+    baseSpeed = float(abs(speed))
+
     startLAngle = buggy.lMotor.current_angle()
     startRAngle = buggy.rMotor.current_angle()
+    absDist = abs(dist)
 
-    absDist: float = abs(dist)
-
-    integral: float = 0
-    lastError: float = 0
+    integral = 0.0
+    lastError = 0.0
 
     lastCheckTime = time.time()
-    lastStuckError = 0
-    stuck_timer_start = None
-    stuck_timeout = 3.0
+    lastStuckError = 0.0
+
+    def clamp(x, lo, hi): return hi if x > hi else lo if x < lo else x
+    def lerp(a, b, t): return a + (b - a) * t
+
+    def accel_factor(traveled: float) -> float:
+        if accelDist <= 0: return 1.0
+        t = clamp(traveled / float(accelDist), 0.0, 1.0)
+        return lerp(startAccelFactor, 1.0, t)
+
+    def decel_factor(remaining: float) -> float:
+        if decelDist <= 0: return 1.0
+        # start decel when remaining <= decelDist
+        t = clamp((decelDist - remaining) / float(decelDist), 0.0, 1.0)
+        return lerp(1.0, endDecelFactor, t)
 
     while buggy.getRelativeAbsAngle(startLAngle, startRAngle) < absDist:
-        error: float = targetAngle + brick.gyro.angle()
-        output: float = Kp * error + Ki * integral + Kd * (error - lastError)
+        traveled = buggy.getRelativeAbsAngle(startLAngle, startRAngle)
+        remaining = max(0.0, absDist - traveled)
 
-        buggy.buggySpeedSetterUtil(dir, output, speed)
+        a = accel_factor(traveled)
+        d = decel_factor(remaining)
+        m = clamp(a * d, min(startAccelFactor, endDecelFactor), 1.0)
+        curr_speed = baseSpeed * m
 
+        # heading PID
+        error = targetAngle + brick.gyro.angle()
+        output = Kp * error + Ki * integral + Kd * (error - lastError)
+
+        buggy.buggySpeedSetterUtil(dir, output, curr_speed)
+
+        # stuck handling
         stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
-
         if stuck:
-            print("STUCK detected, aborting.")
             buggy.brake()
-            s: int
-            if dir: s = -speed 
-            else: s = speed
-            await buggy.moveTank(s, s, 120)
-            stuck_timer_start = None
-        else:
-            stuck_timer_start = None
+            s_val = -int(curr_speed) if dir else int(curr_speed)
+            await buggy.moveTank(s_val, s_val, 120)
+            startLAngle = buggy.lMotor.current_angle()
+            startRAngle = buggy.rMotor.current_angle()  # re-baseline ramps
 
-        integral += error
+        integral = clamp(integral + error, -100.0, 100.0)
         lastError = error
-
-        if integral < -100:
-            integral = -100
-        elif integral > 100:
-            integral = 100
-
         await asyncio.sleep(0.01)
-    if stopAtEnd: buggy.stop()
 
+    if stopAtEnd:
+        buggy.stop()
 
-async def goTilLine(targetAngle: float, speed: float, stopAtEnd: bool = True, timeout: float = 5):
-    dir: bool = buggy.getDir(speed, 1)
-    speed = abs(speed)
+# ========== GO UNTIL LINE ==========
+async def goTilLine(
+    targetAngle: float,
+    speed: float,
+    stopAtEnd: bool = True,
+    timeout: float = 5.0,
 
-    brick.color
-    brick.color.reflected_value()
+    maxDist: float = 2000.0,
 
-    integral: float = 0
-    lastError: float = 0
+    accelDist: float = 60.0,
+    startAccelFactor: float = 0.3,
+    decelDist: float = 140.0,
+    endDecelFactor: float = 0.35,
 
+    postDecelDist: float = 0.0,
+):
+    dir = buggy.getDir(speed, 1)
+    baseSpeed = float(abs(speed))
+
+    startLAngle = buggy.lMotor.current_angle()
+    startRAngle = buggy.rMotor.current_angle()
+    absDist = float(abs(maxDist))
+
+    integral = 0.0
+    lastError = 0.0
     startTime = time.time()
+    last_m = 0.0  # store multiplier at trigger
 
-    while brick.color.reflected_value() > 60 and time.time() - startTime < timeout:
-        error: float = targetAngle + brick.gyro.angle()
-        output: float = Kp * error + Ki * integral + Kd * (error - lastError)
+    def clamp(x, lo, hi): return hi if x > hi else lo if x < lo else x
+    def lerp(a, b, t): return a + (b - a) * t
 
-        buggy.buggySpeedSetterUtil(dir, output, speed)
+    def accel_factor(traveled: float) -> float:
+        if accelDist <= 0: return 1.0
+        t = clamp(traveled / float(accelDist), 0.0, 1.0)
+        return lerp(startAccelFactor, 1.0, t)
 
-        integral += error
+    def pre_decel_factor(traveled: float) -> float:
+        if decelDist <= 0: return 1.0
+        decel_start = max(0.0, absDist - float(decelDist))
+        if traveled < decel_start:
+            return 1.0
+        t = clamp((traveled - decel_start) / max(1e-9, float(decelDist)), 0.0, 1.0)
+        return lerp(1.0, endDecelFactor, t)
+
+    # ---------- pre-trigger ----------
+    while brick.color.reflected_value() > 60 and (time.time() - startTime) < timeout:
+        traveled = buggy.getRelativeAbsAngle(startLAngle, startRAngle)
+
+        a = accel_factor(traveled)
+        d = pre_decel_factor(traveled)
+        m = clamp(a * d, min(startAccelFactor, endDecelFactor), 1.0)
+        last_m = m
+        curr_speed = baseSpeed * m
+
+        error = targetAngle + brick.gyro.angle()
+        output = Kp * error + Ki * integral + Kd * (error - lastError)
+        buggy.buggySpeedSetterUtil(dir, output, curr_speed)
+
+        integral = clamp(integral + error, -100.0, 100.0)
         lastError = error
-
-        if integral < -100:
-            integral = -100
-        elif integral > 100:
-            integral = 100
-
         await asyncio.sleep(0.01)
-    if stopAtEnd: buggy.stop()
 
+    # ---------- post-trigger decel ----------
+    if brick.color.reflected_value() <= 60 and postDecelDist > 0.0:
+        postStartL = buggy.lMotor.current_angle()
+        postStartR = buggy.rMotor.current_angle()
+        postDist = float(abs(postDecelDist))
 
-async def goTilButton(targetAngle: float, spd: float, button: sensors.EV3.TouchSensorEV3, stopDelay: int = 0, timeout: float = 7):
-    dir: bool = buggy.getDir(spd, 1)
-    speed: float = abs(spd)
+        while buggy.getRelativeAbsAngle(postStartL, postStartR) < postDist:
+            t = buggy.getRelativeAbsAngle(postStartL, postStartR) / max(1e-9, postDist)
+            # ramp multiplier from m_at_trigger -> endDecelFactor
+            m = lerp(last_m, endDecelFactor, min(1.0, t))
+            curr_speed = baseSpeed * m
 
-    integral: float = 0
-    lastError: float = 0
+            error = targetAngle + brick.gyro.angle()
+            output = Kp * error + Ki * integral + Kd * (error - lastError)
+            buggy.buggySpeedSetterUtil(dir, output, curr_speed)
+
+            integral = clamp(integral + error, -100.0, 100.0)
+            lastError = error
+            await asyncio.sleep(0.01)
+
+    if stopAtEnd:
+        buggy.stop()
+
+# ========== GO UNTIL BUTTON ==========
+async def goTilButton(
+    targetAngle: float,
+    spd: float,
+    button: sensors.EV3.TouchSensorEV3,
+    stopDelay: int = 0,
+    timeout: float = 7.0,
+
+    maxDist: float = 2000.0,
+
+    accelDist: float = 60.0,
+    startAccelFactor: float = 0.3,
+    decelDist: float = 140.0,
+    endDecelFactor: float = 0.35,
+
+    postDecelDist: float = 0.0,
+):
+    dir = buggy.getDir(spd, 1)
+    baseSpeed = float(abs(spd))
+
+    startLAngle = buggy.lMotor.current_angle()
+    startRAngle = buggy.rMotor.current_angle()
+    absDist = float(abs(maxDist))
+
+    integral = 0.0
+    lastError = 0.0
     startTime = time.time()
 
     lastCheckTime = time.time()
-    lastStuckError = 0
-    stuck_timer_start = None
-    stuck_timeout = 3.0
+    lastStuckError = 0.0
+    last_m = 0.0
 
-    while not button.is_pressed() and time.time() - startTime < timeout:
-        error: float = targetAngle + brick.gyro.angle()
-        output: float = Kp * error + Ki * integral + Kd * (error - lastError)
+    def clamp(x, lo, hi): return hi if x > hi else lo if x < lo else x
+    def lerp(a, b, t): return a + (b - a) * t
 
-        buggy.buggySpeedSetterUtil(True, output, speed)
+    def accel_factor(traveled: float) -> float:
+        if accelDist <= 0: return 1.0
+        t = clamp(traveled / float(accelDist), 0.0, 1.0)
+        return lerp(startAccelFactor, 1.0, t)
 
-        integral += error
-        lastError = error
+    def pre_decel_factor(traveled: float) -> float:
+        if decelDist <= 0: return 1.0
+        decel_start = max(0.0, absDist - float(decelDist))
+        if traveled < decel_start:
+            return 1.0
+        t = clamp((traveled - decel_start) / max(1e-9, float(decelDist)), 0.0, 1.0)
+        return lerp(1.0, endDecelFactor, t)
 
+    # ---------- pre-trigger ----------
+    while not button.is_pressed() and (time.time() - startTime) < timeout:
+        traveled = buggy.getRelativeAbsAngle(startLAngle, startRAngle)
+
+        a = accel_factor(traveled)
+        d = pre_decel_factor(traveled)
+        m = clamp(a * d, min(startAccelFactor, endDecelFactor), 1.0)
+        last_m = m
+        curr_speed = baseSpeed * m
+
+        error = targetAngle + brick.gyro.angle()
+        output = Kp * error + Ki * integral + Kd * (error - lastError)
+        buggy.buggySpeedSetterUtil(dir, output, curr_speed)
+
+        # stuck detection
         stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
-
         if stuck:
-            print("STUCK detected, aborting.")
             buggy.brake()
-            s: int
-            if dir: s = -speed 
-            else: s = speed
-            await buggy.moveTank(s, s, 120)
-            stuck_timer_start = None
-        else:
-            stuck_timer_start = None
+            s_val = -int(curr_speed) if dir else int(curr_speed)
+            await buggy.moveTank(s_val, s_val, 120)
+            startLAngle = buggy.lMotor.current_angle()
+            startRAngle = buggy.rMotor.current_angle()
 
-        if integral < -100:
-            integral = -100
-        elif integral > 100:
-            integral = 100
-
+        integral = clamp(integral + error, -100.0, 100.0)
+        lastError = error
         await asyncio.sleep(0.01)
+
+    # ---------- post-trigger decel ----------
+    if button.is_pressed() and postDecelDist > 0.0:
+        postStartL = buggy.lMotor.current_angle()
+        postStartR = buggy.rMotor.current_angle()
+        postDist = float(abs(postDecelDist))
+
+        while buggy.getRelativeAbsAngle(postStartL, postStartR) < postDist:
+            t = buggy.getRelativeAbsAngle(postStartL, postStartR) / max(1e-9, postDist)
+            m = lerp(last_m, endDecelFactor, min(1.0, t))
+            curr_speed = baseSpeed * m
+
+            error = targetAngle + brick.gyro.angle()
+            output = Kp * error + Ki * integral + Kd * (error - lastError)
+            buggy.buggySpeedSetterUtil(dir, output, curr_speed)
+
+            integral = clamp(integral + error, -100.0, 100.0)
+            lastError = error
+            await asyncio.sleep(0.01)
 
     await asyncio.sleep(stopDelay)
     buggy.stop()
@@ -258,68 +386,74 @@ async def lineFollowerWithGyroTilButton(angle: int, speed: float, button: sensor
 
         await asyncio.sleep(0.01)
 
+async def turnTo(
+    targetAngle: int,
+    tolerance: int,
+    speed: int,
+    powerup: int = 0,
+    stopAtEnd: bool = True,
     
-async def turnTo(targetAngle: int, tolerance: int, speed: int, powerup: int = 0, stopAtEnd: bool = True):
-    dir: bool = False
-
+    accelAngle: float = 32.0,         # degrees of rotation over which to ramp the multiplier
+    startAccelFactor: float = 0.22,    # multiplier at start
+):
     nowDir: int = brick.gyro.angle()
-
     if nowDir == targetAngle:
         return
 
-    integral: float = 0
-    lastError: float = 0
+    startAngle = nowDir
+    integral: float = 0.0
+    lastError: float = 0.0
 
     lastCheckTime = time.time()
-    lastStuckError = 0
-    stuck_timer_start = None
-    stuck_timeout = 3.0
+    lastStuckError = 0.0
 
+    speedLimit: float = 600.0
+
+    def clamp(x, lo, hi):
+        return hi if x > hi else lo if x < lo else x
+
+    def accel_factor(traveled_deg: float) -> float:
+        """Linear ramp multiplier from startAccelFactor -> 1.0 over accelAngle."""
+        if accelAngle <= 0:
+            return 1.0
+        t = clamp(traveled_deg / float(accelAngle), 0.0, 1.0)
+        return startAccelFactor + (1.0 - startAccelFactor) * t
 
     while abs(targetAngle + nowDir) > tolerance:
         nowDir = brick.gyro.angle()
 
-        ILimit: float = 15
-        if integral > ILimit:
-            integral = ILimit
-        elif integral < -ILimit:
-            integral = -ILimit
-
+        # PID
         error: float = targetAngle + nowDir
         output: float = rKp * error + rKi * integral + rKd * (error - lastError)
-        
 
-        stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
+        # how much already rotated since start (for accel ramp)
+        traveled = abs(nowDir - startAngle)
+        a = accel_factor(traveled)
 
-        if stuck:
-            print("STUCK detected, aborting.")
-            buggy.brake()
-            s: int = -speed 
-            await buggy.moveTank(s, s, 120)
-            stuck_timer_start = None
-        else:
-            stuck_timer_start = None
+        lSpeed: float = -output * (speed + powerup) * a
+        rSpeed: float =  output * (speed - powerup) * a
 
-        lSpeed: float = (speed + powerup) * -output
-        rSpeed: float = (speed - powerup) * output
-
-        speedLimit: float = 600
-        if lSpeed > speedLimit:
-            lSpeed = speedLimit
-        elif lSpeed < -speedLimit:
-            lSpeed = -speedLimit
-
-        if rSpeed > speedLimit:
-            rSpeed = speedLimit
-        elif rSpeed < -speedLimit:
-            rSpeed = -speedLimit
+        lSpeed = clamp(lSpeed, -speedLimit, speedLimit)
+        rSpeed = clamp(rSpeed, -speedLimit, speedLimit)
 
         buggy.lMotor.run_at_speed(math.floor(lSpeed))
         buggy.rMotor.run_at_speed(math.floor(rSpeed))
 
+        stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
+        if stuck:
+            buggy.brake()
+            nudge = int(max(80, abs(speed) * a))
+            buggy.lMotor.run_at_speed(-nudge)
+            buggy.rMotor.run_at_speed(+nudge)
+            await asyncio.sleep(0.12)
+            startAngle = brick.gyro.angle()
+
+        ILimit: float = 15.0
         integral += error
+        integral = clamp(integral, -ILimit, ILimit)
         lastError = error
 
         await asyncio.sleep(0.01)
-    
-    if stopAtEnd: buggy.stop()
+
+    if stopAtEnd:
+        buggy.stop()

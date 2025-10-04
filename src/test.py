@@ -10,11 +10,8 @@ import sys
 
 startTime: float
 
-speed: int = 400
-fastSpeed: int = 560
-ultraFastSpeed: int = 700
-turnSpeed: int = 280
-turnSpeedSlow: int = 230
+speed: int = 700
+turnSpeed: int = 400
 
 async def waitForPress():
     listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
@@ -35,7 +32,8 @@ async def waitForPressWithGyroCheck():
 async def initRun():
     global runMotor, frontButton, angleButton, startTime, overBrick
     buggy.init(motors.MotorPort.D, motors.MotorPort.A)
-    pid.init(7, 0.0001, 0.3, 0.03, 0.001, 0.016)
+    pid.init(7, 0.0001, 0.3,     #FORWARD
+             0.03, 0.01, 0.016) #TURNING
 
     print("Reset gyro")
     await waitForPress() 
@@ -57,7 +55,9 @@ async def main():
 
     while True:
         ang = ang + 90
-        await pid.turnTo(ang, 3, turnSpeed, -200, True)
-        await pid.goForDegrees(ang, 200, speed, True)
+        await pid.turnTo(ang, 3, turnSpeed, -200)
+        await asyncio.sleep(0.5)
+        await pid.goForDegrees(ang, 500, speed)
+        await asyncio.sleep(0.5)
 
 asyncio.run(main())
