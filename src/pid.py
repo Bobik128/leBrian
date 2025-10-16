@@ -67,9 +67,9 @@ async def goForDegrees(
     speed: float,
     stopAtEnd: bool = True,
 
-    accelDist: float = 60.0,
+    accelDist: float = 30.0,
     startAccelFactor: float = 0.3,
-    decelDist: float = 140.0,
+    decelDist: float = 90.0,
     endDecelFactor: float = 0.35,
 ):
     dir = buggy.getDir(speed, dist)
@@ -112,7 +112,7 @@ async def goForDegrees(
         error = targetAngle + brick.gyro.angle()
         output = Kp * error + Ki * integral + Kd * (error - lastError)
 
-        buggy.buggySpeedSetterUtil(dir, output, curr_speed)
+        buggy.buggySpeedSetterUtil(dir, output, curr_speed - abs(output))
 
         # stuck handling
         stuck, lastCheckTime, lastStuckError = isStuck(lastCheckTime, lastStuckError, error)
@@ -125,7 +125,7 @@ async def goForDegrees(
 
         integral = clamp(integral + error, -100.0, 100.0)
         lastError = error
-        await asyncio.sleep(0.01)
+        await asyncio.sleep(0.02)
 
     if stopAtEnd:
         buggy.stop()
@@ -136,6 +136,8 @@ async def goTilLine(
     speed: float,
     stopAtEnd: bool = True,
     timeout: float = 5.0,
+
+    middle: int = 60,
 
     maxDist: float = 2000.0,
 
@@ -175,7 +177,7 @@ async def goTilLine(
         return lerp(1.0, endDecelFactor, t)
 
     # ---------- pre-trigger ----------
-    while brick.color.reflected_value() > 60 and (time.time() - startTime) < timeout:
+    while brick.color.reflected_value() > middle and (time.time() - startTime) < timeout:
         traveled = buggy.getRelativeAbsAngle(startLAngle, startRAngle)
 
         a = accel_factor(traveled)
@@ -193,7 +195,7 @@ async def goTilLine(
         await asyncio.sleep(0.01)
 
     # ---------- post-trigger decel ----------
-    if brick.color.reflected_value() <= 60 and postDecelDist > 0.0:
+    if brick.color.reflected_value() <= middle and postDecelDist > 0.0:
         postStartL = buggy.lMotor.current_angle()
         postStartR = buggy.rMotor.current_angle()
         postDist = float(abs(postDecelDist))
@@ -288,7 +290,7 @@ async def goTilButton(
 
         integral = clamp(integral + error, -100.0, 100.0)
         lastError = error
-        await asyncio.sleep(0.01)
+        await asyncio.sleep(0.02)
 
     # ---------- post-trigger decel ----------
     if button.is_pressed() and postDecelDist > 0.0:
@@ -393,7 +395,7 @@ async def turnTo(
     powerup: int = 0,
     stopAtEnd: bool = True,
     
-    accelAngle: float = 32.0,         # degrees of rotation over which to ramp the multiplier
+    accelAngle: float = 20.0,         # degrees of rotation over which to ramp the multiplier
     startAccelFactor: float = 0.22,    # multiplier at start
 ):
     nowDir: int = brick.gyro.angle()
@@ -453,7 +455,7 @@ async def turnTo(
         integral = clamp(integral, -ILimit, ILimit)
         lastError = error
 
-        await asyncio.sleep(0.01)
+        await asyncio.sleep(0.02)
 
     if stopAtEnd:
         buggy.stop()
