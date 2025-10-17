@@ -14,40 +14,168 @@ E5 = 659.26; F5 = 698.46; F5_plus = 739.99; G5_minus = F5_plus
 G5 = 783.99; G5_plus = 830.61; A5_minus = G5_plus
 A5 = 880.00; A5_plus = 932.33; B5_minus = A5_plus; B5 = 987.77
 
-# tempo
-bpm = 45
-f = 60 / bpm / 1   # whole note (semibreve)
-h = 60 / bpm / 2   # half
-q = 60 / bpm / 4   # quarter
-s = 60 / bpm / 8   # eighth
-
 speed: float = 2
 
-# Global lock so tones don't interrupt each other on a single speaker.
 _audio_lock = asyncio.Lock()
 
 async def play(freq, note, dynamic = speed):
-    """freq in Hz, duration in seconds."""
     duration = dynamic * note
     ms = int(round(duration * 1000))
     async with _audio_lock:
-        audio.play_tone(int(round(freq)), ms)  # non-blocking: starts tone
-    # Sleep for the *actual* duration in seconds (no /1000!)
+        audio.play_tone(int(round(freq)), ms)
     await asyncio.sleep(duration)
 
 async def wait(note, dynamic = speed):
     await asyncio.sleep(dynamic * note)
 
-async def main():
-    # await play(G4, speed, 1/4)
-    # await wait(speed, 1/4)
-    await play(E5, 1/4)
-    await play(B4, 1/8)
-    await play(C5, 1/8)
-    await play(D5, 1/8)
-    await play(E5, 1/16)
-    await play(D5, 1/16)
-    await play(C5, 1/8)
-    await play(B4, 1/8)
+# Duration helpers
+W = 1.0     # whole
+H = 1/2     # half
+Q = 1/4     # quarter
+E = 1/8     # eighth
+S = 1/16    # sixteenth
 
+async def REST(dur):  # visual phrasing helper
+    await wait(dur)
+
+async def main():
+    # THEME A — line 1 (you started this; kept intact and continued)
+    await play(E5, Q)
+    await play(B4, E)
+    await play(C5, E)
+    await play(D5, E)
+    await play(E5, S)
+    await play(D5, S)
+    await play(C5, E)
+    await play(B4, E)
+    await play(A4, Q)
+    await play(A4, E)
+    await play(C5, E)
+    await play(E5, Q)
+    await play(D5, E)
+    await play(C5, E)
+    await play(B4, Q)
+    await REST(E)
+
+    # THEME A — line 2
+    await play(C5, E)
+    await play(D5, E)
+    await play(E5, Q)
+    await play(C5, Q)
+    await play(A4, Q)
+    await play(A4, H)  # hold to finish the phrase
+    await REST(E)
+
+    # THEME A — line 3 (climb and fall)
+    await play(D5, Q)
+    await play(F5, E)
+    await play(A5, Q)
+    await play(G5, E)
+    await play(F5, E)
+    await play(E5, Q)
+    await play(C5, E)
+    await play(E5, E)
+    await play(D5, Q)
+    await play(C5, E)
+    await play(B4, E)
+    await play(B4, E)
+    await play(C5, E)
+    await play(D5, Q)
+    await play(E5, Q)
+    await play(C5, Q)
+    await play(A4, Q)
+    await play(A4, H)
+    await REST(E)
+
+    # THEME A — line 4 (repeat of line 1 tail)
+    await play(E5, Q)
+    await play(B4, E)
+    await play(C5, E)
+    await play(D5, E)
+    await play(E5, S)
+    await play(D5, S)
+    await play(C5, E)
+    await play(B4, E)
+    await play(A4, Q)
+    await play(A4, E)
+    await play(C5, E)
+    await play(E5, Q)
+    await play(D5, E)
+    await play(C5, E)
+    await play(B4, Q)
+    await REST(E)
+
+    # THEME A — line 5 (closing)
+    await play(C5, E)
+    await play(D5, E)
+    await play(E5, Q)
+    await play(C5, Q)
+    await play(A4, Q)
+    await play(A4, H)
+    await REST(Q)
+
+    # THEME B — line 1 (bright variant)
+    await play(E5, Q)
+    await play(C5, E)
+    await play(D5, E)
+    await play(B4, Q)
+    await play(C5, E)
+    await play(A4, E)
+    await play(G4, Q)
+    await play(A4, E)
+    await play(C5, E)
+    await play(E5, Q)
+    await play(D5, E)
+    await play(C5, E)
+    await play(B4, Q)
+    await REST(E)
+
+    # THEME B — line 2
+    await play(C5, E)
+    await play(D5, E)
+    await play(E5, Q)
+    await play(C5, Q)
+    await play(A4, Q)
+    await play(A4, H)
+    await REST(Q)
+
+    # THEME B — line 3 (up to the top)
+    await play(E5, Q)
+    await play(C5, E)
+    await play(D5, E)
+    await play(B4, Q)
+    await play(C5, E)
+    await play(A4, E)
+    await play(G4, Q)
+    await play(A4, E)
+    await play(C5, E)
+    await play(D5, E)
+    await play(E5, E)
+    await play(F5, E)
+    await play(E5, E)
+    await play(D5, E)
+    await play(C5, E)
+    await play(B4, E)
+    await play(A4, Q)
+    await play(A4, H)
+    await REST(Q)
+
+    # THEME A — reprise (short)
+    await play(E5, Q)
+    await play(B4, E)
+    await play(C5, E)
+    await play(D5, E)
+    await play(E5, S)
+    await play(D5, S)
+    await play(C5, E)
+    await play(B4, E)
+    await play(A4, Q)
+    await play(A4, E)
+    await play(C5, E)
+    await play(E5, Q)
+    await play(D5, E)
+    await play(C5, E)
+    await play(B4, H)
+
+# run
 asyncio.run(main())
