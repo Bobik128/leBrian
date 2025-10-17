@@ -1,140 +1,53 @@
 import brian.audio as audio
+import asyncio
 import time
 
-C4 = 261.63
-C4_plus = 277.18
-D4_minus = C4_plus
-D4 = 293.66
-D4_plus = 311.13
-E4_minus = D4_plus
-E4 = 329.63
-F4 = 349.23
-F4_plus = 369.99
-G4_minus = F4_plus
-G4 = 392.00
-G4_plus = 415.30
-A4_minus = G4_plus
-A4 = 440.00
-A4_plus = 466.16
-B4_minus = A4_plus
-B4 = 493.88
+C4 = 261.63; C4_plus = 277.18; D4_minus = C4_plus
+D4 = 293.66; D4_plus = 311.13; E4_minus = D4_plus
+E4 = 329.63; F4 = 349.23; F4_plus = 369.99; G4_minus = F4_plus
+G4 = 392.00; G4_plus = 415.30; A4_minus = G4_plus
+A4 = 440.00; A4_plus = 466.16; B4_minus = A4_plus; B4 = 493.88
 
-C5 = 523.25
-C5_plus = 554.37
-D5_minus = C5_plus
-D5 = 587.33
-D5_plus = 622.25
-E5_minus = D5_plus
-E5 = 659.26
-F5 = 698.46
-F5_plus = 739.99
-G5_minus = F5_plus
-G5 = 783.99
-G5_plus = 830.61
-A5_minus = G5_plus
-A5 = 880.00
-A5_plus = 932.33
-B5_minus = A5_plus
-B5 = 987.77
+C5 = 523.25; C5_plus = 554.37; D5_minus = C5_plus
+D5 = 587.33; D5_plus = 622.25; E5_minus = D5_plus
+E5 = 659.26; F5 = 698.46; F5_plus = 739.99; G5_minus = F5_plus
+G5 = 783.99; G5_plus = 830.61; A5_minus = G5_plus
+A5 = 880.00; A5_plus = 932.33; B5_minus = A5_plus; B5 = 987.77
 
-
-def play(freq, duration):
-    """
-    :param freq: note freq Hz
-    :param duration: duration in s
-    :return:
-    """
-
-    audio.play_tone(round(freq), round(duration * 1000))  # hz, ms
-    time.sleep(duration)
-
-
+# tempo
 bpm = 45
-f = 60 / bpm / 1
-h = 60 / bpm / 2
-q = 60 / bpm / 4
-s = 60 / bpm / 8
+f = 60 / bpm / 1   # whole note (semibreve)
+h = 60 / bpm / 2   # half
+q = 60 / bpm / 4   # quarter
+s = 60 / bpm / 8   # eighth
 
-time.sleep(1)
+speed: float = 2
 
+# Global lock so tones don't interrupt each other on a single speaker.
+_audio_lock = asyncio.Lock()
 
-def bbcd():
-    play(B4, q)
-    play(B4, q)
-    play(C5, q)
-    play(D5, q)
+async def play(freq, note, dynamic = speed):
+    """freq in Hz, duration in seconds."""
+    duration = dynamic * note
+    ms = int(round(duration * 1000))
+    async with _audio_lock:
+        audio.play_tone(int(round(freq)), ms)  # non-blocking: starts tone
+    # Sleep for the *actual* duration in seconds (no /1000!)
+    await asyncio.sleep(duration)
 
+async def wait(note, dynamic = speed):
+    await asyncio.sleep(dynamic * note)
 
-def dcba():
-    play(D5, q)
-    play(C5, q)
-    play(B4, q)
-    play(A4, q)
+async def main():
+    # await play(G4, speed, 1/4)
+    # await wait(speed, 1/4)
+    await play(E5, 1/4)
+    await play(B4, 1/8)
+    await play(C5, 1/8)
+    await play(D5, 1/8)
+    await play(E5, 1/16)
+    await play(D5, 1/16)
+    await play(C5, 1/8)
+    await play(B4, 1/8)
 
-
-def ggab():
-    play(G4, q)
-    play(G4, q)
-    play(A4, q)
-    play(B4, q)
-
-
-def baa():
-    play(B4, q + s)
-    play(A4, s)
-    play(A4, h)
-
-
-def agg():
-    play(A4, q + s)
-    play(G4, s)
-    play(G4, h)
-
-
-def aabg():
-    play(A4, q)
-    play(A4, q)
-    play(B4, q)
-    play(G4, q)
-
-
-def abcbg():
-    play(A4, q)
-    play(B4, s)
-    play(C5, s)
-    play(B4, q)
-    play(G4, q)
-
-
-def abcba():
-    play(A4, q)
-    play(B4, s)
-    play(C5, s)
-    play(B4, q)
-    play(A4, q)
-
-
-def gad():
-    play(G4, q)
-    play(A4, q)
-    play(D4, h)
-
-
-# --- start ---
-
-bbcd()
-dcba()
-ggab()
-baa()
-bbcd()
-dcba()
-ggab()
-agg()
-aabg()
-abcbg()
-abcba()
-gad()
-bbcd()
-dcba()
-ggab()
-agg()
+asyncio.run(main())

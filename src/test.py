@@ -189,13 +189,13 @@ async def program():
 
     await moveArm(230)
 
-    await pid.goForDegrees(270, -160, speed)
+    await pid.goForDegrees(270, -180, speed)
 
-    await pid.turnTo(315, 3, turnSpeed, 0)
+    await pid.turnTo(310, 3, turnSpeed, 0)
 
     await moveArm(0)
 
-    await pid.goForDegrees(315, 320, speedWithBricks)
+    await pid.goForDegrees(310, 335, speedWithBricks)
     await moveArm(230)
 
     # put green to its place
@@ -209,7 +209,7 @@ async def program():
     await moveArm(0)
 
     # Grab second 2 green blocks
-    await pid.goForDegrees(180, -680, speed)
+    await pid.goForDegrees(180, -690, speed)
     await pid.turnTo(270, 3, turnSpeed, 0)
     await pid.goForDegrees(270, 260, speed)
 
@@ -225,7 +225,7 @@ async def program():
     await moveArm(230)
 
     # put green (2nd) to its place
-    await pid.goForDegrees(315, -190, speed)
+    await pid.goForDegrees(310, -190, speed)
 
     await pid.turnTo(270, 3, turnSpeed, 0)
     await pid.goForDegrees(270, -160, speed)
@@ -275,8 +275,8 @@ async def program():
     await pid.turnTo(90, 3, turnSpeedWithBricks, 0)
     await pid.goForDegrees(90, 260, speedWithBricks)
 
-    await moveArm(90)
-    await pid.goForDegrees(90, 260, speedWithBricks)
+    await moveArm(600)
+    await pid.goForDegrees(90, 200, speedWithBricks)
     await moveArm(0)
 
     return "t1"
