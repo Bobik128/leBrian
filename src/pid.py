@@ -67,10 +67,10 @@ async def goForDegrees(
     speed: float,
     stopAtEnd: bool = True,
 
-    accelDist: float = 30.0,
-    startAccelFactor: float = 0.3,
-    decelDist: float = 90.0,
-    endDecelFactor: float = 0.35,
+    accelDist: float = 10.0,
+    startAccelFactor: float = 0.35,
+    decelDist: float = 30.0,
+    endDecelFactor: float = 0.40,
 ):
     dir = buggy.getDir(speed, dist)
     baseSpeed = float(abs(speed))
@@ -125,7 +125,7 @@ async def goForDegrees(
 
         integral = clamp(integral + error, -100.0, 100.0)
         lastError = error
-        await asyncio.sleep(0.02)
+        await asyncio.sleep(0.03)
 
     if stopAtEnd:
         buggy.stop()
@@ -192,7 +192,7 @@ async def goTilLine(
 
         integral = clamp(integral + error, -100.0, 100.0)
         lastError = error
-        await asyncio.sleep(0.01)
+        await asyncio.sleep(0.03)
 
     # ---------- post-trigger decel ----------
     if brick.color.reflected_value() <= middle and postDecelDist > 0.0:
@@ -392,11 +392,12 @@ async def turnTo(
     targetAngle: int,
     tolerance: int,
     speed: int,
-    powerup: int = 0,
+    left_powerup: int = 0,
+    right_powerup: int = 0,
     stopAtEnd: bool = True,
     
-    accelAngle: float = 20.0,         # degrees of rotation over which to ramp the multiplier
-    startAccelFactor: float = 0.22,    # multiplier at start
+    accelAngle: float = 10.0,         # degrees of rotation over which to ramp the multiplier
+    startAccelFactor: float = 0.3,    # multiplier at start
 ):
     nowDir: int = brick.gyro.angle()
     if nowDir == targetAngle:
@@ -421,6 +422,7 @@ async def turnTo(
         t = clamp(traveled_deg / float(accelAngle), 0.0, 1.0)
         return startAccelFactor + (1.0 - startAccelFactor) * t
 
+    await asyncio.sleep(0.04)
     while abs(targetAngle + nowDir) > tolerance:
         nowDir = brick.gyro.angle()
 
@@ -432,8 +434,8 @@ async def turnTo(
         traveled = abs(nowDir - startAngle)
         a = accel_factor(traveled)
 
-        lSpeed: float = -output * (speed + powerup) * a
-        rSpeed: float =  output * (speed - powerup) * a
+        lSpeed: float = -output * (speed + left_powerup) * a
+        rSpeed: float =  output * (speed + right_powerup) * a
 
         lSpeed = clamp(lSpeed, -speedLimit, speedLimit)
         rSpeed = clamp(rSpeed, -speedLimit, speedLimit)
@@ -455,7 +457,7 @@ async def turnTo(
         integral = clamp(integral, -ILimit, ILimit)
         lastError = error
 
-        await asyncio.sleep(0.02)
+        await asyncio.sleep(0.04)
 
     if stopAtEnd:
         buggy.stop()
