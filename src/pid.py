@@ -125,7 +125,7 @@ async def goForDegrees(
 
         integral = clamp(integral + error, -100.0, 100.0)
         lastError = error
-        await asyncio.sleep(0.04)
+        await asyncio.sleep(0.05)
 
     if stopAtEnd:
         buggy.stop()

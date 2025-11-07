@@ -141,7 +141,7 @@ async def initRun():
 
     brick.resetGyro()
 
-    await pid.goForDegrees(0, 320, 260)
+    await pid.goForDegrees(0, 310, 260)
     print("")
     print("Start")
 
@@ -152,7 +152,7 @@ async def initRun():
 
 async def grabBlue():
     await pid.turnTo(45, 3, turnSpeedWithBricks, 0)
-    await pid.goForDegrees(45, 100 * bluePartK, speedWithBricks)
+    await pid.goForDegrees(50, 90 * bluePartK, speedWithBricks)
     await pid.turnTo(0, 3, turnSpeedWithBricks, 0)
     await pid.goForDegrees(0, 300 * bluePartK, speedWithBricks)
 
@@ -176,7 +176,7 @@ async def program():
 
     await pid.goForDegrees(190, 260 * bluePartK, speed)
     asyncio.create_task(moveArm(0))
-    await pid.goForDegrees(185, -210 * bluePartK, speed)
+    await pid.goForDegrees(185, -195 * bluePartK, speed)
     await pid.turnTo(-20, 3, turnSpeed, 0)
     await pid.goForDegrees(-20, 200 * bluePartK, speed)
 
@@ -187,7 +187,7 @@ async def program():
     asyncio.create_task(moveArm(0))
 
     await asyncio.sleep(0.2)
-    await pid.goForDegrees(187, -305, speed)
+    await pid.goForDegrees(187, -310, speed)
 
     # Grab first 2 green blocks
     await pid.turnTo(270, 3, turnSpeed, 0)
@@ -195,20 +195,20 @@ async def program():
 
     await moveArm(230)
 
-    await pid.goForDegrees(270, -190, speed)
+    await pid.goForDegrees(270, -260, speed)
 
-    await pid.turnTo(310, 3, turnSpeed, 0)
+    await pid.turnTo(305, 3, turnSpeed, 0)
 
     asyncio.create_task(moveArm(0))
 
-    await pid.goForDegrees(310, 335, speedWithBricks)
+    await pid.goForDegrees(305, 370, speedWithBricks)
     await moveArm(230)
 
     # put green to its place
     await pid.goForDegrees(315, -190, speed)
 
     # await pid.turnTo(270, 3, turnSpeed, 0)
-    await pid.goForDegrees(270, -100, speed)
+    await pid.goForDegrees(270, -130, speed)
     await pid.turnTo(180, 3, turnSpeed, 0)
     await pid.goForDegrees(180, 160, speed)
 
@@ -216,19 +216,19 @@ async def program():
     await asyncio.sleep(0.2)
 
     # Grab second 2 green blocks
-    await pid.goForDegrees(180, -735, speed)
+    await pid.goForDegrees(180, -755, speed)
     await pid.turnTo(270, 3, turnSpeed, 0)
     await pid.goForDegrees(270, 160, speed)
 
     await moveArm(230)
 
-    await pid.goForDegrees(270, -180, speed)
+    await pid.goForDegrees(270, -220, speed)
 
-    await pid.turnTo(310, 3, turnSpeed, 0)
+    await pid.turnTo(305, 3, turnSpeed, 0)
 
     asyncio.create_task(moveArm(0))
 
-    await pid.goForDegrees(310, 350, speedWithBricks)
+    await pid.goForDegrees(305, 390, speedWithBricks)
     await moveArm(230)
 
     # put green (2nd) to its place
@@ -237,7 +237,7 @@ async def program():
     # await pid.turnTo(270, 3, turnSpeed, 0)
     await pid.goForDegrees(270, -120, speed)
     await pid.turnTo(180, 3, turnSpeed, 0)
-    await pid.goForDegrees(180, 950, speed - 50)
+    await pid.goForDegrees(180, 950, fastSpeed)
 
     asyncio.create_task(moveArm(0))
 
@@ -284,18 +284,18 @@ async def program():
     await pid.goTilLine(10, speedWithBricks - 100, middle=middleCol, accelDist=0, postDecelDist=50, decelDist=50)
     await pid.turnTo(90, 3, turnSpeedWithBricks, right_powerup=-40, left_powerup=40)
 
-    await pid.goForDegrees(93, 260, speedWithBricks)
+    await pid.goForDegrees(93, 220, speedWithBricks)
 
     asyncio.create_task(moveArm(600))
     await asyncio.sleep(0.2)
-    await pid.goForDegrees(93, 140, speedWithBricks)
+    await pid.goForDegrees(93, 120, speedWithBricks)
     asyncio.create_task(moveArm(0))
-    await pid.goForDegrees(93, -345, speed)
+    await pid.goForDegrees(93, -290, speed)
 
     await pid.turnTo(0, 3, turnSpeedWithBricks, 0)
     await pid.goTilLine(1, speedWithBricks, middle=middleCol, accelDist=0, postDecelDist=80, decelDist=50)
 
-    await pid.turnTo(90, 3, turnSpeedWithBricks, left_powerup=60, right_powerup=-60)
+    await pid.turnTo(90, 3, turnSpeedWithBricks, left_powerup=100, right_powerup=-100)
 
     await pid.goForDegrees(85, 440, speedWithBricks)
     await pid.goForDegrees(85, -60, speedWithBricks)
@@ -324,7 +324,7 @@ async def program():
     # second row
     asyncio.create_task(moveArm(600))
     await asyncio.sleep(0.2)
-    await pid.goForDegrees(95, 120, speedWithBricks)
+    await pid.goForDegrees(95, 135, speedWithBricks)
     asyncio.create_task(moveArm(0))
     await asyncio.sleep(0.2)
     await pid.goForDegrees(95, -370, speed)
@@ -344,7 +344,7 @@ async def program():
 
     await pid.goForDegrees(146, -100, speedWithBricks)
     await pid.turnTo(120, 3, turnSpeed, left_powerup=20)
-    await pid.goForDegrees(120, 350, speedWithBricks)
+    await pid.goForDegrees(120, 380, speedWithBricks)
     await moveArm(230)
     await asyncio.sleep(0.2)
 
@@ -373,31 +373,22 @@ async def program():
 
     await pid.goForDegrees(90, -900, speedWithBricks, False, accelDist=0, startAccelFactor=1)
 
-    await pid.goForDegrees(90, 360, speed)
+    await pid.goForDegrees(90, 180, speed)
 
     await pid.turnTo(0, 3, turnSpeed)
-    asyncio.create_task(moveArm(0))
 
     await pid.goTilButton(0, -speedWithBricks, leftButton, postDecelDist=30)
+    await pid.goForDegrees(0, 400, speed, decelDist=0, endDecelFactor=1, stopAtEnd=False)
+    await pid.goForDegrees(-60, 800, speed, startAccelFactor=1, accelDist=0)
 
-    await pid.goForDegrees(0, 1320, superFastSpeed)
+    await pid.turnTo(0, 3, turnSpeed)
+    await pid.goForDegrees(0, -400, speed)
 
-    await pid.goTilLine(0, speedWithBricks, middle=middleCol, accelDist=0, postDecelDist=300, decelDist=50)
+    await pid.goForDegrees(0, 50, speed, decelDist=0, endDecelFactor=1, stopAtEnd=False)
+    await pid.goForDegrees(-45, 280, speed, startAccelFactor=1, accelDist=0)
 
-    await moveArm(400)
-    await pid.goForDegrees(0, -250, fastSpeed)
-
-    asyncio.create_task(moveArm(0))
-    await pid.turnTo(35, 3, turnSpeed)
-    await pid.goForDegrees(25, 350, fastSpeed)
-
-    await moveArm(400)
-
-    await pid.goForDegrees(25, -900, fastSpeed)
-
-    await pid.turnTo(180, 3, turnSpeed)
-
-    await pid.goForDegrees(180, 900, fastSpeed)
+    await pid.turnTo(0, 3, turnSpeed, left_powerup=-turnSpeed)
+    await pid.goForDegrees(0, -480, speed)
 
     return "t1"
 
