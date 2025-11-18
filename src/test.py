@@ -7,6 +7,7 @@ import asyncio
 import pid
 import time
 import sys
+import song
 
 startTime: float
 white: int
@@ -216,23 +217,23 @@ async def program():
     await asyncio.sleep(0.2)
 
     # Grab second 2 green blocks
-    await pid.goForDegrees(180, -775, speed)
+    await pid.goForDegrees(180, -740, speed)
     await pid.turnTo(270, 3, turnSpeed, 0)
-    await pid.goForDegrees(270, 190, speed)
+    await pid.goForDegrees(270, 300, speedWithBricks)
 
-    await moveArm(230)
+    await moveArm(220)
 
-    await pid.goForDegrees(270, -250, speed)
+    await pid.goForDegrees(270, -320, speed)
 
-    await pid.turnTo(298, 3, turnSpeed, 0)
+    await pid.turnTo(300, 3, turnSpeed, 0)
 
     asyncio.create_task(moveArm(0))
 
-    await pid.goForDegrees(298, 390, speedWithBricks)
+    await pid.goForDegrees(300, 390, speedWithBricks)
     await moveArm(230)
 
     # put green (2nd) to its place
-    await pid.goForDegrees(310, -150, speed)
+    await pid.goForDegrees(310, -160, speed)
 
     # await pid.turnTo(270, 3, turnSpeed, 0)
     await pid.goForDegrees(270, -120, speed)
@@ -293,9 +294,9 @@ async def program():
     await pid.goForDegrees(93, -290, speed)
 
     await pid.turnTo(0, 3, turnSpeedWithBricks, 0)
-    await pid.goTilLine(1, speedWithBricks, middle=middleCol, accelDist=0, postDecelDist=80, decelDist=50)
+    await pid.goTilLine(1, speedWithBricks, middle=middleCol, accelDist=0, postDecelDist=100, decelDist=50)
 
-    await pid.turnTo(90, 3, turnSpeedWithBricks, left_powerup=100, right_powerup=-100)
+    await pid.turnTo(90, 3, turnSpeedWithBricks - 40, left_powerup=130, right_powerup=-130)
 
     await pid.goForDegrees(85, 440, speedWithBricks)
     await pid.goForDegrees(85, -60, speedWithBricks)
@@ -327,7 +328,7 @@ async def program():
     await pid.goForDegrees(95, 170, speedWithBricks)
     asyncio.create_task(moveArm(0))
     # await asyncio.sleep(0.05)
-    await pid.goForDegrees(95, -395, speed)
+    await pid.goForDegrees(92, -395, speed)
 
     await pid.turnTo(0, 3, turnSpeedWithBricks, 0)
     asyncio.create_task(moveArm(300))
@@ -384,7 +385,7 @@ async def program():
     await pid.goForDegrees(-60, 800, fastSpeed, startAccelFactor=1, accelDist=0)
 
     await pid.turnTo(0, 3, speed)
-    await pid.goForDegrees(0, -450, speed)
+    await pid.goForDegrees(0, -450, speedWithBricks)
 
     await pid.goForDegrees(0, 50, fastSpeed, decelDist=0, endDecelFactor=1, stopAtEnd=False)
     await pid.goForDegrees(-50, 260, fastSpeed, startAccelFactor=1, accelDist=0)
@@ -396,15 +397,15 @@ async def program():
 
     asyncio.create_task(moveArm(0))
 
-    await pid.goForDegrees(25, 1220, fastSpeed, startAccelFactor=1, accelDist=0, decelDist=0, endDecelFactor=1, stopAtEnd=False)
+    await pid.goForDegrees(23, 1220, fastSpeed, startAccelFactor=1, accelDist=0, decelDist=0, endDecelFactor=1, stopAtEnd=False)
     await pid.goTilLine(0, speedWithBricks, middle=middleCol, accelDist=0, postDecelDist=40, decelDist=50)
 
-    asyncio.create_task(moveArm(520))
+    asyncio.create_task(moveArm(480))
 
     await pid.turnTo(-167, 3, turnSpeed)
 
     asyncio.create_task(moveArm(400))
-    await pid.goForDegrees(-167, 1400, fastSpeed + 100, startAccelFactor=1, accelDist=0)
+    await pid.goForDegrees(-167, 1500, fastSpeed + 200, startAccelFactor=0.5, accelDist=60, decelDist=0, endDecelFactor=1)
 
     return "t1"
 
@@ -413,6 +414,7 @@ async def main():
 
     t1 = asyncio.create_task(program())
     t2 = asyncio.create_task(timeWatcher())
+
 
     tasks = [t1, t2]
 
@@ -427,5 +429,7 @@ async def main():
         print("First task raised:", e)
     
     print(f"Elapsed time: {time.time() - startTime:.2f} seconds")
+
+    await song.main()
 
 asyncio.run(main())
