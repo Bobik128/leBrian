@@ -67,9 +67,9 @@ async def goForDegrees(
     speed: float,
     stopAtEnd: bool = True,
 
-    accelDist: float = 5.0,
+    accelDist: float = 4.0,
     startAccelFactor: float = 0.40,
-    decelDist: float = 20.0,
+    decelDist: float = 18.0,
     endDecelFactor: float = 0.45,
 ):
     dir = buggy.getDir(speed, dist)
