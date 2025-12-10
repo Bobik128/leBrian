@@ -192,7 +192,7 @@ async def program():
     asyncio.create_task(moveArm(0))
 
     await asyncio.sleep(0.2)
-    await pid.goForDegrees(187, -320, speed)
+    await pid.goForDegrees(187, -310, speed)
 
     # Grab first 2 green blocks
     await pid.turnTo(270, 3, turnSpeed, 0)
@@ -246,7 +246,7 @@ async def program():
     asyncio.create_task(moveArm(0))
 
     # reset gyro
-    await pid.goForDegrees(180, -130, speed - 50)
+    await pid.goForDegrees(180, -160, speed - 50)
     await pid.turnTo(270, 3, turnSpeed, 0)
     await pid.goTilButton(270, -speedWithBricks, leftButton, postDecelDist=30)
 
@@ -277,19 +277,22 @@ async def program():
     # await pid.goForDegrees(225, -1000, fastSpeed)
 
     await pid.goForDegrees(-12, 380, speed, False, decelDist=0)
-    await pid.goTilLine(0, speedWithBricks, middle=middleCol, accelDist=0, postDecelDist=180, decelDist=0, endDecelFactor=1)
+    await pid.goTilLine(-12, speedWithBricks + 80, middle=middleCol, accelDist=0, postDecelDist=200, decelDist=0, endDecelFactor=1)
 
-    asyncio.create_task(moveArm(480))
+    asyncio.create_task(moveArm(440))
+    await asyncio.sleep(0.1)
+    await pid.goForDegrees(-12, -20, speed, False, decelDist=0)
 
-    await pid.turnTo(30, 3, turnSpeedWithBricks)
+    await pid.turnTo(27, 3, turnSpeedWithBricks)
 
     asyncio.create_task(moveArm(0))
 
-    await pid.goForDegrees(28, -55, speed)
+    await pid.goForDegrees(27, 5, fastSpeed)
+    await pid.goForDegrees(27, -110, speed)
 
-    await pid.turnTo(-55, 3, turnSpeed, 0)
-    await pid.goForDegrees(-55, 100, speed, False, decelDist=0, endDecelFactor=1)
-    await pid.goTilLine(-55, speedWithBricks, middle=middleCol, postDecelDist=0, accelDist=0, endDecelFactor=1, decelDist=0)
+    await pid.turnTo(-45, 3, turnSpeed, 0)
+    await pid.goForDegrees(-45, 220, speed, False, decelDist=0, endDecelFactor=1)
+    await pid.goTilLine(-45, speedWithBricks, middle=middleCol, postDecelDist=0, accelDist=0, endDecelFactor=1, decelDist=0)
 
     await pid.turnTo(10, 3, turnSpeed, 0)
     await pid.goTilLine(10, speedWithBricks, middle=middleCol, accelDist=0, postDecelDist=80, decelDist=50, endDecelFactor=1, stopAtEnd=False)
@@ -319,10 +322,10 @@ async def program():
     await moveArm(230)
     await pid.goForDegrees(113, -20, speedWithBricks)
 
-    await pid.turnTo(165, 3, turnSpeedWithBricks, left_powerup=60, right_powerup=-20)
-    await pid.goForDegrees(165, 100, fastSpeed)
+    await pid.turnTo(162, 3, turnSpeedWithBricks, left_powerup=60, right_powerup=-20)
+    await pid.goForDegrees(162, 100, fastSpeed)
 
-    await pid.goForDegrees(202, 1000, fastSpeed)
+    await pid.goForDegrees(199, 1000, fastSpeed)
     await pid.goForDegrees(180, 430, fastSpeed)
     await moveArm(0)
     await pid.goForDegrees(180, 800, -fastSpeed, False, decelDist=0, endDecelFactor=0)
@@ -331,12 +334,12 @@ async def program():
     await pid.turnTo(115, 3, turnSpeedWithBricks, right_powerup=120, left_powerup=-120)
     await pid.goForDegrees(116, 180, fastSpeed, False)
     # await pid.turnTo(100, 3, turnSpeedWithBricks, False)
-    await pid.goForDegrees(110, 90, fastSpeed, endDecelFactor=1, stopAtEnd=False, decelDist=0)
+    await pid.goForDegrees(110, 110, fastSpeed, endDecelFactor=1, stopAtEnd=False, decelDist=0)
 
     # second row
     asyncio.create_task(moveArm(600))
     # await asyncio.sleep(0.07)
-    await pid.goForDegrees(110, 80, speedWithBricks, startAccelFactor=1, accelDist=0)
+    await pid.goForDegrees(102, 320, speedWithBricks, startAccelFactor=1, accelDist=0)
     asyncio.create_task(moveArm(0))
     # await asyncio.sleep(0.05)
     await pid.goForDegrees(96, -395, speed)
@@ -370,9 +373,9 @@ async def program():
     await pid.goForDegrees(180, 350, speed - 100)
 
     await moveArm(0)
-    await pid.goForDegrees(180, -120, fastSpeed)
+    await pid.goForDegrees(180, -100, fastSpeed)
     await pid.turnTo(208, 3, turnSpeedWithBricks + 80)
-    # await pid.goForDegrees(206, -30, fastSpeed)
+    await pid.goForDegrees(208, -20, fastSpeed, startAccelFactor=0.8, endDecelFactor=0.8)
     # await pid.turnTo(180, 3, turnSpeedWithBricks)
     # await pid.goForDegrees(180, 25, fastSpeed)
     # await asyncio.sleep(0.1)
