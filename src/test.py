@@ -219,7 +219,7 @@ async def grab1Green():
     asyncio.create_task(moveArm(0))
 
 async def grab2Green():
-    await pid.goForDegrees(180, -550, speed)
+    await pid.goForDegrees(180, -545, speed)
     await pid.turnTo(270, 3, turnSpeed, 0)
     await pid.goForDegrees(270, 300, speedWithBricks)
 
@@ -329,7 +329,7 @@ async def goTil2Red():
     
 async def redGrabPushBricks2():
     await pid.goForDegrees(85, 740, speed)
-    await pid.goForDegrees(85, -90, speedWithBricks)
+    await pid.goForDegrees(85, -85, speedWithBricks)
 
     await pid.turnTo(146, 3, turnSpeedWithBricks - 130, left_powerup=30, right_powerup=-30)
 
@@ -346,7 +346,7 @@ async def redGrabPushBricks2():
 
     # asyncio.create_task(moveArm(230))
 
-    await pid.goForDegrees(205, 950, fastSpeed)
+    await pid.goForDegrees(207, 950, fastSpeed)
     await pid.goForDegrees(180, 350, speed - 100)
 
     await moveArm(0)
@@ -358,7 +358,7 @@ async def pushIn():
     await pid.turnTo(125, 3, turnSpeedWithBricks)
     asyncio.create_task(moveArm(600))
 
-    await pid.goForDegrees(120, 320, fastSpeed)
+    await pid.goForDegrees(125, 300, fastSpeed)
     await pid.turnTo(45, 3, turnSpeedWithBricks)
     await pid.goForDegrees(40, -280, speed, False, decelDist=0, endDecelFactor=1)
 
