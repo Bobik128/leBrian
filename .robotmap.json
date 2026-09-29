@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "canvas": {
+    "width": 1920,
+    "height": 2518
+  },
+  "background": ".robotmap/assets/ee5238577d2f6195291af873b8b40208.png",
+  "objects": [
+    {
+      "id": "a5c5c5a5aa03",
+      "source": "src/app_test.py",
+      "label": "Gyro drive",
+      "x": 1378.78,
+      "y": 266.09,
+      "rotation": 0,
+      "scale": 0.97,
+      "icon": "forward",
+      "templateId": "pid_go_degrees",
+      "kind": "line",
+      "endX": 1147.27,
+      "endY": 421.2,
+      "width": 4.1,
+      "arrow": "end"
+    },
+    {
+      "id": "7f79f72ec38c",
+      "source": "src/app_test.py",
+      "label": "ahoj",
+      "x": 829.12,
+      "y": 462.22,
+      "rotation": 0,
+      "scale": 1,
+      "icon": "robot"
+    }
+  ],
+  "settings": {
+    "textSize": 11,
+    "selectionScale": 0.6,
+    "symbolSize": 50,
+    "lineWidth": 4.1
+  }
+}
