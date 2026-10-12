@@ -37,7 +37,11 @@ async def main():
     await brick.waitForPress()
     await asyncio.sleep(1)
 
-    await buggy.moveTank(80, 80, 600)
+    angle: int = 0
+    while True:
+        await pid.goForDegrees(angle, 400, 400, 100, 100, 100, 100)
+        angle = angle + 90
+        await pid.turnTo(angle, 300, -400, 100)
 
 
 asyncio.run(main())

@@ -109,10 +109,27 @@ def brake():
     lMotor.brake()
     rMotor.brake()
 
-def speedHelper(max_speed: float, end_speed: float, start_speed: float, max_dist: float, decel_dist: float, accel_dist: float, now_dist: float):
-    # Speed loop
-    f1: float = math.sqrt(start_speed**2 + (max_speed**2 - start_speed**2) * (now_dist / accel_dist)) if accel_dist > 0 else max_speed
-    f2: float = max_speed
-    f3: float = math.sqrt(end_speed**2 + (max_speed**2 - end_speed**2) * (now_dist / decel_dist)) if decel_dist > 0 else max_speed
+def speedHelper(
+    max_speed: float,
+    end_speed: float,
+    start_speed: float,
+    max_dist: float,
+    decel_dist: float,
+    accel_dist: float,
+    now_dist: float
+):
+    f1 = math.sqrt(
+        start_speed**2 +
+        (max_speed**2 - start_speed**2) * (now_dist / accel_dist)
+    ) if accel_dist > 0 else max_speed
 
-    speed: float = min(f1, f2, f3)
+    f2 = max_speed
+
+    remaining_dist = max_dist - now_dist
+
+    f3 = math.sqrt(
+        end_speed**2 +
+        (max_speed**2 - end_speed**2) * (remaining_dist / decel_dist)
+    ) if decel_dist > 0 else max_speed
+
+    return min(f1, f2, f3)

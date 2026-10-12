@@ -7,7 +7,7 @@
       "command": "flatpak-spawn",
       "args": [
         "bash",
-        "upload_to_sd.sh"
+        "upload_to_sd_wifi.sh"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

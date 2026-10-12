@@ -10,6 +10,7 @@ HOST() { flatpak-spawn --host "$@"; }
 
 echo "Copying files to SD card..."
 HOST /usr/bin/rsync -av --delete "$SRC" "$DEST"
+# HOST /usr/bin/cp -r "$SRC" "$DEST"
 
 echo "Syncing buffers..."
 HOST /bin/sync

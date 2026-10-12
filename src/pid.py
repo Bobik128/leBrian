@@ -13,11 +13,13 @@ rKp: float
 rKi: float
 rKd: float
 
-pidDir: int = 1
-integralClamp: float = 100
+integralClamp: float
+pidDir: int
 
-async def init(kp: float, ki: float, kd: float, rkp: float, rki: float, rkd: float):
-    global Kp, Ki, Kd, rKp, rKi, rKd, integralClamp
+def init(kp: float, ki: float, kd: float, rkp: float, rki: float, rkd: float):
+    global Kp, Ki, Kd, rKp, rKi, rKd, integralClamp, pidDir
+    integralClamp = 100
+    pidDir = 1
     Kp = kp
     Ki = ki
     Kd = kd
@@ -26,61 +28,232 @@ async def init(kp: float, ki: float, kd: float, rkp: float, rki: float, rkd: flo
     rKi = rki
     rKd = rkd
 
-async def pidLoop(target: float, integral: float, last_error: float, derivative: float, last_angle: float, last_time: int, low_pass: float, integralClamp: float):
-    global Kp, Ki, Kd, pidDir, integralClamp
-    now_angle: float = brick.gyroAngle()
+def pidLoop(target: float, now: float, state: PIDState, low_pass: float, Kp: float, Ki: float, Kd: float, pidDIr: int = 1):
+    global integralClamp
 
     # Proportional
-    error: float = target - now_angle * pidDir
+    error = target - now * pidDir
 
     # Integral
-    integral = integral + error
+    state.integral += error
 
-    if ((error > 0) != (last_error > 0)):
-        integral = 0
-    
-    integral = clamp(integral, -integralClamp, integralClamp)
+    if (error > 0) != (state.last_error > 0):
+        state.integral = 0
+
+    state.integral = max(
+        min(state.integral, integralClamp),
+        -integralClamp
+    )
 
     # Derivative
-    now_time: int = time.ticks_ms()
-    time_diff: int = now_time - last_time
-    raw_derivative: float = (now_angle - last_angle) / time_diff if now_time - last_time != 0 else Exception("You time traveller!")
+    now_time = time.ticks_ms()
+    time_diff = time.ticks_diff(now_time, state.last_time)
 
-    alpha: float =  time_diff / (time_diff + low_pass)
-    derivative = derivative + alpha * (raw_derivative - derivative)
+    if time_diff > 0:
+        raw_derivative = (
+            now - state.last_angle
+        ) / time_diff
+    else:
+        raw_derivative = 0.0
 
-    # Post process
-    last_time = now_time
-    last_angle = now_angle
+    alpha = time_diff / (time_diff + low_pass)
 
-    output: float = Kp * error + Ki * integral + Kd * derivative
+    state.derivative += alpha * (
+        raw_derivative - state.derivative
+    )
 
-async def goForDegrees(target_angle: float, speed: float, dist: float, start_speed: float, end_speed: float, decel_dist: float, accel_dist: float):
-    start_angle: float = brick.gyroAngle()
-    start_time: int = time.ticks_ms()
-    integral: float = 0
-    last_error: float = 0
-    derivative: float = 0
-    last_angle: float = start_angle
-    last_time: int = start_time
+    # Update state
+    state.last_error = error
+    state.last_time = now_time
+    state.last_angle = now
 
-    start_l_angle: float = buggy.lMotor.current_angle()
-    start_r_angle: float = buggy.rMotor.current_angle()
+    return (
+        Kp * error
+        + Ki * state.integral
+        + Kd * state.derivative
+    )
 
-    forward: bool = (dist > 0) == (speed > 0)
-    dist = abs(dist)
+async def goUntil(
+    target_angle: float,
+    speed: float,
+    max_dist: float,
+    start_speed: float = 0,
+    end_speed: float = 0,
+    decel_dist: float = 0,
+    accel_dist: float = 0,
+    stop_at_the_end: bool = True,
+    stop_condition_func: callable = None
+):
+    global Kp, Ki, Kd, pidDir
+    pid = PIDState()
+    
+    start_l_angle = buggy.lMotor.current_angle()
+    start_r_angle = buggy.rMotor.current_angle()
+
+    forward = (max_dist > 0) == (speed > 0)
+
+    max_dist = abs(max_dist)
     speed = abs(speed)
 
-    while buggy.getRelativeAbsAngle(start_l_angle, start_r_angle) < dist:
-        now_angle: float = brick.gyroAngle()
-        now_dist: float = buggy.getRelativeAbsAngle(start_l_angle, start_r_angle)
+    while not stop_condition_func():
 
-        await pidLoop(target_angle, integral, last_error, derivative, last_angle, last_time, 0.001, integralClamp)
+        now_dist = buggy.getRelativeAbsAngle(
+            start_l_angle,
+            start_r_angle
+        )
 
-        speed = buggy.speedHelper(speed, end_speed, start_speed, dist, decel_dist, accel_dist, now_dist)
-        buggy.buggySpeedSetterUtil(forward, output, speed)
+        output = pidLoop(
+            target_angle,
+            brick.gyroAngle(),
+            pid,
+            0.001,
+            Kp,
+            Ki,
+            Kd,
+            pidDir
+        )
 
-    buggy.stop()
+        speed_out = buggy.speedHelper(
+            speed,
+            end_speed,
+            start_speed,
+            max_dist,
+            decel_dist,
+            accel_dist,
+            now_dist
+        )
+
+        buggy.buggySpeedSetterUtil(
+            forward,
+            output,
+            speed_out
+        )
+
+        await asyncio.sleep(0.04)
+
+    if stop_at_the_end:
+        buggy.stop()
+
+async def goForDegrees(
+    target_angle: float,
+    speed: float,
+    dist: float,
+    start_speed: float = 0,
+    end_speed: float = 0,
+    decel_dist: float = 0,
+    accel_dist: float = 0,
+    stop_at_the_end: bool = True
+):
+    start_l_angle = buggy.lMotor.current_angle()
+    start_r_angle = buggy.rMotor.current_angle()
+
+    await goUntil(
+        target_angle,
+        speed,
+        dist,
+        start_speed,
+        end_speed,
+        decel_dist,
+        accel_dist,
+        stop_at_the_end,
+        lambda: buggy.getRelativeAbsAngle(
+            start_l_angle,
+            start_r_angle
+        ) >= abs(dist)
+    )
+
+async def goTilLine(
+    target_angle: float,
+    speed: float,
+    dist: float,
+    start_speed: float = 0,
+    end_speed: float = 0,
+    decel_dist: float = 0,
+    accel_dist: float = 0,
+    stop_at_the_end: bool = True
+):
+    start_l_angle = buggy.lMotor.current_angle()
+    start_r_angle = buggy.rMotor.current_angle()
+
+    await goUntil(
+        target_angle,
+        speed,
+        dist,
+        start_speed,
+        end_speed,
+        decel_dist,
+        accel_dist,
+        stop_at_the_end,
+        lambda: buggy.getRelativeAbsAngle(
+            start_l_angle,
+            start_r_angle
+        ) >= abs(dist)
+    )
+
+async def turnTo(
+    target_angle: float,
+    speed: float,
+    left_powerup: float = 0,
+    right_powerup: float = 0,
+    start_speed: float = 0,
+    accel_angle: float = 0,
+    stop_at_the_end: bool = True,
+    tolerance_degrees: float = 2.0,
+    speed_limit: float = 600.0
+):
+    pid = PIDState()
+
+    start_angle = brick.gyroAngle()
+
+    angle_diff = abs(target_angle - start_angle)
+    speed = abs(speed)
+
+    while abs(brick.gyroAngle() - target_angle) > tolerance_degrees:
+
+        now_angle = brick.gyroAngle()
+        output = pidLoop(
+            target_angle,
+            now_angle,
+            pid,
+            0.001,
+            Kp=rKp,
+            Ki=rKi,
+            Kd=rKd,
+        )
+
+        now_angle_diff = abs(target_angle - now_angle)
+
+        speed_out = buggy.speedHelper(
+            speed,
+            speed,
+            start_speed,
+            angle_diff,
+            0,
+            accel_angle,
+            now_angle_diff
+        )
+
+        lSpeed: float = -output * (speed_out + left_powerup)
+        rSpeed: float =  output * (speed_out + right_powerup)
+
+        lSpeed = min(max(lSpeed, -speed_limit), speed_limit)
+        rSpeed = min(max(rSpeed, -speed_limit), speed_limit)
+
+        buggy.lMotor.run_at_speed(math.floor(lSpeed))
+        buggy.rMotor.run_at_speed(math.floor(rSpeed))
+
+        await asyncio.sleep(0.04)
+
+    if stop_at_the_end:
+        buggy.stop()
+
+class PIDState:
+    def __init__(self):
+        self.integral = 0.0
+        self.last_error = 0.0
+        self.derivative = 0.0
+        self.last_angle = brick.gyroAngle()
+        self.last_time = time.ticks_ms()
 
 
     

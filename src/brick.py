@@ -34,6 +34,12 @@ async def waitForPress():
         knob: uicontrol.UiEventsListener.KnobEvent = listener.knob_event_since_last()
         if knob.just_pressed:
             break
+        await asyncio.sleep(0.01)
+
+def isPressed():
+    listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
+    knob: uicontrol.UiEventsListener.KnobEvent = listener.knob_event_since_last()
+    return knob.just_pressed
 
 async def waitForPressWithGyroCheck():
     listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
@@ -43,6 +49,7 @@ async def waitForPressWithGyroCheck():
         knob: uicontrol.UiEventsListener.KnobEvent = listener.knob_event_since_last()
         if knob.just_pressed:
             break
+        await asyncio.sleep(0.01)
 
 async def waitForAnyPress():
     listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
@@ -58,6 +65,7 @@ async def waitForAnyPress():
             return 3
         elif buttons.bottom_left.just_pressed:
             return 4
+        await asyncio.sleep(0.01)
 
 def gyroAngle():
     if gyro is None:
