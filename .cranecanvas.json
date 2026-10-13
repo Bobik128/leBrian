@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "canvas": {
+    "width": 1920,
+    "height": 2518
+  },
+  "background": ".cranecanvas/assets/78c4aaa6ab0e45637e24f8f3.jpg",
+  "grid": {
+    "originX": 930,
+    "originY": 1260,
+    "pixelsPerUnit": 1098.001,
+    "rotation": 90,
+    "flipZ": false,
+    "step": 0.1,
+    "axisLabel": "Z",
+    "calibrated": true
+  },
+  "robot": {
+    "min": 0.2,
+    "max": 1,
+    "margin": 0.01,
+    "initialRadius": 0.215,
+    "initialYaw": 0,
+    "initialEnd": 0
+  },
+  "appearance": {
+    "theme": "auto",
+    "textSize": 13,
+    "dotSize": 7,
+    "headingLength": 25,
+    "pathWidth": 2.5,
+    "palette": "spectrum",
+    "showGrid": true,
+    "showRange": true,
+    "showPaths": true,
+    "showLabels": true,
+    "backgroundOpacity": 1,
+    "backgroundPage": 1,
+    "snap": false
+  },
+  "variables": {},
+  "templates": [
+    {
+      "id": "linear",
+      "name": "Move linear",
+      "motion": "linear",
+      "prefix": "await crane.moveLinear(",
+      "kind": "symbol",
+      "icon": "forward",
+      "arguments": [
+        {
+          "name": "target_x",
+          "label": "X",
+          "default": "0.4"
+        },
+        {
+          "name": "target_z",
+          "label": "Z",
+          "default": "0.4"
+        },
+        {
+          "name": "absolute_end_angle",
+          "label": "Absolute end (°)",
+          "default": "0"
+        },
+        {
+          "name": "angular",
+          "label": "Yaw speed (rad/s)",
+          "default": "max_angular_speed",
+          "keyword": "max_angular_speed"
+        },
+        {
+          "name": "extension",
+          "label": "Extension speed",
+          "default": "max_extendon_speed",
+          "keyword": "max_extension_speed"
+        },
+        {
+          "name": "acceleration",
+          "label": "Acceleration",
+          "default": "max_acceleration",
+          "keyword": "max_acceleration"
+        }
+      ]
+    },
+    {
+      "id": "extension",
+      "name": "Move extension",
+      "motion": "extension",
+      "prefix": "await crane.moveExtendon(",
+      "kind": "symbol",
+      "icon": "forward",
+      "arguments": [
+        {
+          "name": "length",
+          "label": "Length",
+          "default": "0.6"
+        },
+        {
+          "name": "speed",
+          "label": "Speed",
+          "default": "0.3",
+          "keyword": "max_speed"
+        },
+        {
+          "name": "acceleration",
+          "label": "Acceleration",
+          "default": "0.5",
+          "keyword": "max_acceleration"
+        }
+      ]
+    },
+    {
+      "id": "yaw",
+      "name": "Move yaw",
+      "motion": "yaw",
+      "prefix": "await crane.moveYaw(",
+      "kind": "symbol",
+      "icon": "turn",
+      "arguments": [
+        {
+          "name": "angle_degrees",
+          "label": "Yaw (°)",
+          "default": "45"
+        },
+        {
+          "name": "speed",
+          "label": "Speed (°/s)",
+          "default": "45",
+          "keyword": "max_speed"
+        },
+        {
+          "name": "acceleration",
+          "label": "Acceleration (°/s²)",
+          "default": "120",
+          "keyword": "max_acceleration"
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "name": "Move end",
+      "motion": "end",
+      "prefix": "await crane.moveEnd(",
+      "kind": "symbol",
+      "icon": "turn",
+      "arguments": [
+        {
+          "name": "absolute_angle_degrees",
+          "label": "Absolute end (°)",
+          "default": "0"
+        },
+        {
+          "name": "speed",
+          "label": "Speed (°/s)",
+          "default": "90",
+          "keyword": "max_speed"
+        },
+        {
+          "name": "acceleration",
+          "label": "Acceleration (°/s²)",
+          "default": "240",
+          "keyword": "max_acceleration"
+        }
+      ]
+    }
+  ],
+  "sourceFiles": [
+    "src/main.py"
+  ],
+  "objects": [
+    {
+      "id": "3baa353e31d2f0cf7c92ca39",
+      "source": "src/main.py",
+      "label": "moveLinear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "158161fda0ebe4be81e03fa0",
+      "source": "src/main.py",
+      "label": "moveLinear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "a63dea85782a4c1bb77d82f5",
+      "source": "src/main.py",
+      "label": "moveLinear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "a9a66ac488ce17846023d570",
+      "source": "src/main.py",
+      "label": "moveLinear",
+      "color": null,
+      "scale": 1
+    }
+  ]
+}

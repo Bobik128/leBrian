@@ -26,10 +26,9 @@ async def main():
     print("Starting main")
     await crane.init(motors.MotorPort.D, motors.MotorPort.B, motors.MotorPort.C, sensors.SensorPort.S1)
     while True:
-        await crane.moveLinear(0.4, 0.4, 0, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_acceleration=max_acceleration)
-        await crane.moveLinear(0.4, -0.4, 0, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_acceleration=max_acceleration)
-        await crane.moveLinear(0.7, -0.4, 0, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_acceleration=max_acceleration)
-        await crane.moveLinear(0.7, 0.4, 0, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_acceleration=max_acceleration)
-
+        await crane.moveLinear(0.3, -0.3, 0, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_acceleration=max_acceleration)  # @crane:3baa353e31d2f0cf7c92ca39
+        await crane.moveLinear(0.6, -0.3, 0, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_acceleration=max_acceleration)  # @crane:158161fda0ebe4be81e03fa0
+        await crane.moveLinear(0.6, 0.3, 90, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_acceleration=max_acceleration)  # @crane:a63dea85782a4c1bb77d82f5
+        await crane.moveLinear(0.3, 0.3, 0, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_acceleration=max_acceleration)  # @crane:a9a66ac488ce17846023d570
 
 asyncio.run(main())
