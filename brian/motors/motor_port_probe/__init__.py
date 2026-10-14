@@ -6,10 +6,13 @@ from brian.motors.motor_types import DeviceType as DeviceType
 
 
 class AutoDetect:
-    """"""
+    """Results of the motor port auto-detection."""
 
     def __init__(self, device_class: DeviceClass, device_type: DeviceType):
-        """"""
+        """
+        :param device_class: Detected device class.
+        :param device_type: More detailed device type.
+        """
         ...
 
     @property
@@ -24,29 +27,34 @@ class AutoDetect:
 
 
 class PortMode(Enum):
-    POWER_OFF = 0, """Disabled state"""
-    AUTOID_ONLY = 1, """Passive probing state"""
-    ANALOG_MOTOR = 2, """NXT/EV3 motor"""
+    """Operating mode of a motor port."""
+    POWER_OFF = 0
+    """Disabled state"""
+    AUTOID_ONLY = 1
+    """Passive probing state"""
+    ANALOG_MOTOR = 2
+    """NXT/EV3 motor"""
 
 
 class MotorPortProbe:
-    """"""
+    """Read-only snapshot of a motor port, returned by probe_motor()."""
 
     is_motor_api_handler_registered: bool
-    """"""
+    """True if a Motor object is currently registered on the port"""
     is_connected: bool
-    """"""
+    """True if a device is connected to the port"""
     auto_detect: 'AutoDetect'
-    """"""
+    """Result of the port auto-detection"""
     port_mode: 'PortMode'
-    """"""
+    """Current mode of the port"""
 
 
 def probe_motor(port: 'MotorPort') -> 'MotorPortProbe':
     """
     Return latest read-only information about a motor connected to a given port. This method can be called
     any time (regardless of registered Motor port handler or if it is not registered)
-    :param: port motor port to probe.
+
+    :param port: port motor port to probe.
     :return: information about the current port usage
     """
     ...
@@ -60,8 +68,8 @@ def probe_motor_with_port_mode_hint(port: 'MotorPort', hint: 'PortMode') -> 'Mot
     class of motors to be connected, this may be useful to extract more information, for example about supported
     behavior. This method can be used only, when there is no Motor handler registered.
 
-    :param: port motor port to probe.
-    :param: PortMode target port mode. Only 'PortMode.POWER_OFF' and 'PortMode.AUTOID_ONLY' can be set manually.
+    :param port: port motor port to probe.
+    :param hint: PortMode target port mode. Only 'PortMode.POWER_OFF' and 'PortMode.AUTOID_ONLY' can be set manually.
     :return: information about the current port usage
 
     :raises MotorPortAlreadyInUse: When trying to create probe port that is already in use.

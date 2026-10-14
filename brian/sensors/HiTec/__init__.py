@@ -1,1 +1,1 @@
-from GyroSensorHiTec import GyroSensorHiTec
+from brian.sensors.HiTec.GyroSensorHiTec import GyroSensorHiTec

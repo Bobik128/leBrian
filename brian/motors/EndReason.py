@@ -1,5 +1,5 @@
 from enum import Enum
-class MovementEnd(Enum):
+class EndReason(Enum):
     """
     Reasons for movement end.
     """

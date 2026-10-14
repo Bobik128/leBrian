@@ -1,5 +1,5 @@
-from .MotorPort import MotorPort
-from .Motor import Motor
+from brian.motors.MotorPort import MotorPort
+from brian.motors.Motor import Motor
 
 
 class EV3MediumMotor(Motor):

@@ -1,17 +1,30 @@
 from enum import Enum
 
 class DeviceClass(Enum):
+    """Device detected on a motor port using only ADC readings. Valid only when the port mode is not POWER_OFF."""
+
     NONE = 0
+    """No device is detected"""
     ERROR = 1
+    """Some device was detected, but it is not clear which"""
     EV3_ANALOG_MOTOR = 2
+    """NXT/EV3 motor was detected; the device type contains the ID"""
     EV3_UART_DEVICE = 3
+    """Unknown EV3 UART device was detected; further active probing is needed"""
 
 
 class DeviceType(Enum):
+    """More detailed type of a device detected as DeviceClass.EV3_ANALOG_MOTOR."""
     UNKNOWN = 0
+    """Motor type is not known (yet)"""
     NXT_EV3_LARGE_MOTOR = 7
+    """NXT or EV3 large motor (these are not distinguishable)"""
     EV3_MEDIUM_MOTOR = 8
+    """EV3 medium motor"""
 class MotorType:
+    """
+    Description of a supported motor type and its default control parameters.
+    """
 
     @property
     def name(self) -> str:
@@ -36,6 +49,9 @@ class MotorType:
 
     @property
     def default_acceleration_limit(self) -> int:
+        """
+        :return: Acceleration limit a new Motor of this type starts with, in degrees per second squared
+        """
         ...
 
     class Identification:
@@ -43,16 +59,16 @@ class MotorType:
         Results of auto-detection
         """
         @property
-        def device_type(self) -> 'DeviceClass':
+        def device_type(self) -> 'DeviceType':
             """
-            :return: Detected device class (portMode must not be POWER_OFF)
+            :return: More detailed device type
             """
             ...
 
         @property
-        def device_class(self) -> 'DeviceType':
+        def device_class(self) -> 'DeviceClass':
             """
-            :return: More detailed device type
+            :return: Detected device class (portMode must not be POWER_OFF)
             """
             ...
 
@@ -62,14 +78,23 @@ class MotorType:
         """
         @property
         def motor(self) -> 'Motor':
+            """
+            :return: Linear dynamic model of the motor
+            """
             ...
 
         @property
         def controller(self) -> 'Controller':
+            """
+            :return: Constants of the position/speed controller
+            """
             ...
 
         @property
         def observer(self) -> 'Observer':
+            """
+            :return: Configuration of the state observer
+            """
             ...
 
         class Motor:
@@ -227,10 +252,14 @@ class MotorType:
                 """
                 @property
                 def Kp(self) -> int:
-                    """"""
+                    """
+                    :return: Proportional gain of the speed tracking loop
+                    """
                     ...
 
                 @property
                 def Ki(self) -> int:
-                    """"""
+                    """
+                    :return: Integral gain of the speed tracking loop
+                    """
                     ...

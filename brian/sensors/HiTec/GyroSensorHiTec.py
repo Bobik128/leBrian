@@ -24,6 +24,6 @@ class GyroSensorHiTec(Sensor):
 
         :return: angular speed in degrees/second (-500 to 400).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
         """
         ...

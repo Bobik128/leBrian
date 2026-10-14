@@ -1,3 +1,5 @@
+from typing import Optional
+
 from brian.sensors.Sensor import Sensor
 from brian.sensors.SensorPort import SensorPort
 
@@ -25,51 +27,48 @@ class TouchSensorNXT(Sensor):
 
         :return: True if the sensor button is pressed, False otherwise. Or False if the sensor is not ready.
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
         """
         ...
 
-    def wait_for_press(self, timeout_ms: int = -1) -> bool:
+    def wait_for_press(self, timeout_ms: Optional[int] = None) -> bool:
         """
         Waits for next button press event.
         This function is blocking.
 
-        :param timeout_ms: Maximum number of milliseconds to wait. If the timeout is negative, the function will wait indefinitely.
+        :param timeout_ms: Maximum number of milliseconds to wait.
+            - If the timeout is not provided or is None, the function will wait indefinitely.
 
         :return success:
             - True: If the desired button event was caught.
             - False: If the timeout ran out.
-
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
         """
         ...
 
-    def wait_for_release(self, timeout_ms: int = -1) -> bool:
+    def wait_for_release(self, timeout_ms: Optional[int] = None) -> bool:
         """
         Waits for next button release event.
         This function is blocking.
 
-        :param timeout_ms: Maximum number of milliseconds to wait. If the timeout is negative, the function will wait indefinitely.
+        :param timeout_ms: Maximum number of milliseconds to wait.
+            - If the timeout is not provided or is None, the function will wait indefinitely.
 
         :return success:
             - True: If the desired button event was caught.
             - False: If the timeout ran out.
-
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
         """
         ...
 
-    def wait_for_press_and_release(self, timeout_ms: int = -1 ) -> bool:
+    def wait_for_press_and_release(self, timeout_ms: Optional[int] = None) -> bool:
         """
         Waits for next button press and release event.
         This function is blocking.
 
-        :param timeout_ms: Maximum number of milliseconds to wait. If the timeout is negative, the function will wait indefinitely.
+        :param timeout_ms: Maximum number of milliseconds to wait.
+            - If the timeout is not provided or is None, the function will wait indefinitely.
 
         :return success:
             - True: If the desired button event was caught.
             - False: If the timeout ran out.
-
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
         """
         ...

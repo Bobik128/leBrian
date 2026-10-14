@@ -1,8 +1,12 @@
-from .MotorPort import MotorPort
-from .Motor import Motor
+from brian.motors.MotorPort import MotorPort
+from brian.motors.Motor import Motor
 
 
 class NXTMotor(Motor):
+    """
+    A class to manage and control NXTMotor operations.
+    """
+
     def __init__(self, port: MotorPort):
         """
         Initialize a new NXTMotor motor object on the given port.

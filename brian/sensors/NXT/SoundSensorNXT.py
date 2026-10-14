@@ -23,7 +23,7 @@ class SoundSensorNXT(Sensor):
 
         :return: Value in range 0-1, with 0 being the quietest and 1 being the loudest.
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
         """
         ...
 
@@ -33,6 +33,6 @@ class SoundSensorNXT(Sensor):
 
         :return: Value in range 0-4095, with 4095 being the quietest and 0 being the loudest.
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
         """
         ...

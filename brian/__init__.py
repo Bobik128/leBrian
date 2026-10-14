@@ -1,6 +1,9 @@
-import audio
-import motors
-import runtime
-import sensors
-import settings
-import uicontrol
+from brian import audio
+from brian import bremote
+from brian import brick
+from brian import buttons
+from brian import display
+from brian import motors
+from brian import pilot
+from brian import sensors
+from brian import settings

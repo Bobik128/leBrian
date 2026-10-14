@@ -1,5 +1,5 @@
-from .Sensor import Sensor
-from .SensorPort import SensorPort
+from brian.sensors.Sensor import Sensor
+from brian.sensors.SensorPort import SensorPort
 
 class UltrasonicSensorNXT(Sensor):
     """
@@ -23,6 +23,6 @@ class UltrasonicSensorNXT(Sensor):
 
         :return: distance in cm (0-255).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
         """
         ...

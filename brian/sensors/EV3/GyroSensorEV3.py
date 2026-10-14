@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Tuple
 from brian.sensors.Sensor import Sensor
 from brian.sensors.SensorPort import SensorPort
@@ -19,13 +20,38 @@ class GyroSensorEV3(Sensor):
         """
         ...
 
+    from enum import Enum
+
+    class Mode(Enum):
+        """Sensor modes for set_mode()."""
+        ANGLE = 0
+        """Angle, used by angle()"""
+        SPEED = 1
+        """Angular speed, used by speed()"""
+        SPEED_COARSE = 2
+        """Coarse angular speed with a wider range, used by speed_coarse()"""
+        ANGLE_AND_SPEED = 3
+        """Angle and angular speed together, used by angle_and_speed()"""
+        TILT_SPEED = 5
+        """Tilt angular speed, used by tilt_speed()"""
+        TILT_ANGLE = 6
+        """Tilt angle, used by tilt_angle()"""
+
+    def set_mode(self, mode: Mode) -> None:
+        """
+        This function sets the sensor to the desired mode. While it’s not mandatory, it is recommended to call this
+        function before accessing values from the sensor in a specific mode to prevent SensorNotReady exceptions.
+
+        :param mode: desired mode to be set
+        """
+
     def angle(self) -> int:
         """
         Sets the sensor mode to `ANGLE` and returns the last value.
 
         :return: angle (int) in degrees (-32768 to 32768).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>ANGLE mode:</b>
         Measures the tilt angle and returns the value in degrees in range -32768 to 32767.
@@ -43,7 +69,7 @@ class GyroSensorEV3(Sensor):
 
         :return: angular speed in degrees/s (-500 to 500).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>SPEED mode:</b>
         Measures angular speed and returns the value in degrees/second in range -500 to 500.
@@ -58,12 +84,22 @@ class GyroSensorEV3(Sensor):
 
         :return: angular speed in degrees/s (-500 to 500).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>TILT_SPEED mode:</b>
         Measures angular speed around a second axis and returns the value in degrees/second in range -500 to 500
         Clockwise is positive when looking at the side of the sensor opposite the cable jack.
 
+        """
+        ...
+
+    def is_tilt_available(self) -> bool:
+        """
+        Checks whether the gyro sensor is compatible with second axis measurements (TILT_ANGLE and TILT_SPEED).
+
+        :return: True if tilt modes are available, False otherwise.
+
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
         """
         ...
 
@@ -73,7 +109,7 @@ class GyroSensorEV3(Sensor):
 
         :return: angle (int) in degrees (-32768 to 32768).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>TILT_ANGLE mode:</b>
         Measures the tilt angle around a second axis and returns the value in degrees in range -32768 to 32767.
@@ -86,13 +122,13 @@ class GyroSensorEV3(Sensor):
         """
         ...
 
-    def coarse_speed(self) -> int:
+    def speed_coarse(self) -> int:
         """
         Sets the sensor mode to `SPEED_COARSE` and returns the last value.
 
         :return: angular speed in degrees/s (-1464 to 1535).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>SPEED_COARSE mode:</b>
         Measures angular speed and returns the value in degrees/second in range -1464 to 1535.
@@ -110,7 +146,7 @@ class GyroSensorEV3(Sensor):
                 - The first integer represents the angle (deg) measurement.
                 - The second integer represents the speed (deg/s) measurement.
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>ANGLE_AND_SPEED mode:</b>
         Measures the tilt angle and angular speed and returns the value in degrees in range -32768 to 32767 for angle and -500 to 500 for speed.
@@ -127,7 +163,7 @@ class GyroSensorEV3(Sensor):
         Adjusts angle only in "ANGLE", "ANGLE_AND_SPEED" and "TILT_ANGLE" modes.
         Does not fix drift (for drift fixing, reboot the sensor using the reboot() function).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
         """
         ...
 

@@ -4,16 +4,16 @@ from brian.sensors.SensorPort import SensorPort as SensorPort
 
 
 class AutoDetect(Enum):
-    """"""
-    NOT_CONNECTED = 1 << 6,
-    """"""
+    """Bus or protocol detected on a sensor port, also used as a hint for probe_sensor_with_autodetect_hint()."""
+    NOT_CONNECTED = 1 << 6
+    """No sensor is connected"""
 
-    ANALOG_P1 = 0b00,
-    """"""
+    ANALOG_P1 = 0b00
+    """Analog sensor measured on pin 1"""
     ANALOG_P1_HACKER = 0b100
     """ Force P1 ADC mode, regardless of what AD thinks"""
-    ANALOG_P6 = 0b10,
-    """"""
+    ANALOG_P6 = 0b10
+    """Analog sensor measured on pin 6"""
     ANALOG_P6_HACKER = 0b110
     """ Force P6 ADC mode, regardless of what AD thinks"""
 
@@ -24,23 +24,23 @@ class AutoDetect(Enum):
     I2C_400K = 0b1011
     """ Most other 3rd party sensors support fast I2C speeds"""
     UART_2400 = 0b0001
-    """"""
+    """UART at 2400 baud"""
     UART_9600 = 0b0101
-    """"""
+    """UART at 9600 baud"""
     UART_115K = 0b1001
     """ 115200 baud"""
     UART_MULTI_BRIAN_MASTER = UART_115K + (1 << 5)
-    """"""
+    """Brian-to-Brian link, master side"""
     UART_MULTI_BRIAN_SLAVE = UART_115K + (1 << 5) + (1 << 4)
     """ Slave has uart RX/TX pins swapped"""
 
     PROTOCOL_UART_EV3 = UART_2400 + (1 << 4)
-    """"""
+    """EV3 UART sensor protocol"""
     PROTOCOL_I2C_NXT_REG = I2C_9K6 + (1 << 4)
-    """"""
+    """NXT register-based I2C sensor protocol"""
 
-    ERROR = 1 << 7, """ MSB is error flag, the rest can be used as an error code"""
-    """"""
+    ERROR = 1 << 7
+    """ MSB is error flag, the rest can be used as an error code"""
 
 class SensorInfo:
     """
@@ -114,19 +114,19 @@ class SensorInfo:
         ...
 
 class SensorPortProbe:
-    """"""
+    """Read-only snapshot of a sensor port, returned by probe_sensor()."""
     is_sensor_api_handler_registered: bool
-    """"""
+    """True if a Sensor object is currently registered on the port"""
 
     is_connected: bool
-    """"""
+    """True if a sensor is connected to the port"""
     auto_detect: AutoDetect
-    """"""
+    """Detected bus or protocol"""
     auto_detect_hint: AutoDetect
-    """"""
+    """Hint the port was probed with"""
 
     info: SensorInfo
-    """"""
+    """Information reported by the sensor"""
 
 
 def probe_sensor(port: SensorPort) -> SensorPortProbe:
@@ -152,7 +152,7 @@ def probe_sensor_with_autodetect_hint(port: SensorPort, hint: AutoDetect) -> Sen
     :param hint: hint to for autodetect (e.g. software protocol over detected hw bus)
     :return: information about the current port usage
 
-    :raises SensorPortAlreadyInUse: When trying to probe port that is already in use.
+    :raises SensorPortAlreadyInUseError: When trying to probe port that is already in use.
     """
     ...
 

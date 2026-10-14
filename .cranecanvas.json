@@ -76,6 +76,12 @@
           "keyword": "max_extension_speed"
         },
         {
+          "name": "end_motor",
+          "label": "End motor speed (rad/s)",
+          "default": "max_end_motor_speed",
+          "keyword": "max_end_angular_speed"
+        },
+        {
           "name": "acceleration",
           "label": "Acceleration",
           "default": "max_acceleration",
@@ -172,7 +178,7 @@
     {
       "id": "3baa353e31d2f0cf7c92ca39",
       "source": "src/main.py",
-      "label": "moveLinear",
+      "label": "FIrst move",
       "color": null,
       "scale": 1
     },
@@ -194,6 +200,62 @@
       "id": "a9a66ac488ce17846023d570",
       "source": "src/main.py",
       "label": "moveLinear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "72d66e2e12d8c89dfe661660",
+      "source": "src/main.py",
+      "label": "moveLinear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "e74bc721506564b4cbd68d62",
+      "source": "src/main.py",
+      "label": "Move linear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "717ecab7c9fec103023e5134",
+      "source": "src/main.py",
+      "label": "Move linear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "0d4078471721155934dfe7e3",
+      "source": "src/main.py",
+      "label": "Move linear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "386efeca860f91789af030f1",
+      "source": "src/main.py",
+      "label": "Move linear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "fd4b03b249af2a8375b5411e",
+      "source": "src/main.py",
+      "label": "Move linear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "2b54300696cfee20bfa7c4cb",
+      "source": "src/main.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 0.5
+    },
+    {
+      "id": "dfddffe656ff5910a951f5e7",
+      "source": "src/main.py",
+      "label": "Move linear",
       "color": null,
       "scale": 1
     }

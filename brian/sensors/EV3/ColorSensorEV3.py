@@ -19,18 +19,32 @@ class ColorSensorEV3(Sensor):
         """
         ...
 
-    class RGB:
+
+    class Mode(Enum):
+        """Sensor modes for set_mode()."""
+        REFLECT = 0
+        """Reflected light intensity, used by reflected_value()"""
+        AMBIENT = 1
+        """Ambient light intensity, used by ambient_value()"""
+        COLOR_DETECT = 2
+        """Detected color, used by detected_color()"""
+        REFLECT_RAW = 3
+        """Raw reflected light intensity, used by reflected_value_raw()"""
+        RGB_RAW = 4
+        """Raw RGB values, used by rgb_values_raw()"""
+
+    class RawRGB:
         """
-        Class used to hold rgb values from ColorSensor.rgb_values_raw() measurement.
+        Class used to hold rgb values from ColorSensorEV3.rgb_values_raw() measurement.
         Each color channel holds values between 0-1023.
-        Attributes can be accessed either directly or using an index (RGB[0] = RGB.red)
+        Attributes can be accessed either directly or using an index (RawRGB[0] = RawRGB.red)
         """
         red: int
-        """"""
+        """Red component (0-1023)"""
         green: int
-        """"""
+        """Green component (0-1023)"""
         blue: int
-        """"""
+        """Blue component (0-1023)"""
 
         def __init__(self, red: int, green: int, blue: int):
             """
@@ -38,7 +52,6 @@ class ColorSensorEV3(Sensor):
             :param green: green color component [0-1023].
             :param blue: blue color component [0-1023].
             """
-            ...
 
         def __sub__(self, other):
             """
@@ -47,6 +60,7 @@ class ColorSensorEV3(Sensor):
             If resulting element would be smaller than 0, it is set to 0
             """
             ...
+
         def __getitem__(self, item):
             """"""
             ...
@@ -54,31 +68,40 @@ class ColorSensorEV3(Sensor):
     class Color(Enum):
         """
         Constants for `ColorSensor.detected_color(self)` function.
+
+        ``str(color)`` (and therefore ``print(color)``) gives the English name of the color, e.g. "Red".
         """
         NO_COLOR = 0
-        """"""
+        """No color detected"""
         BLACK = 1
-        """"""
+        """Black"""
         BLUE = 2
-        """"""
+        """Blue"""
         GREEN = 3
-        """"""
+        """Green"""
         YELLOW = 4
-        """"""
+        """Yellow"""
         RED = 5
-        """"""
+        """Red"""
         WHITE = 6
-        """"""
+        """White"""
         BROWN = 7
-        """"""
+        """Brown"""
 
+    def set_mode(self, mode: Mode) -> None:
+        """
+        This function sets the sensor to the desired mode. While it’s not mandatory, it is recommended to call this
+        function before accessing values from the sensor in a specific mode to prevent SensorNotReady exceptions.
+
+        :param mode: desired mode to be set
+        """
     def reflected_value(self) -> int:
         """
         Sets the sensor mode to `REFLECT` and returns the last value.
 
         :return: reflectivity in % (0-100).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>REFLECT mode:</b>
         Measure surface reflectivity for red light. The values are calibrated
@@ -93,7 +116,7 @@ class ColorSensorEV3(Sensor):
 
         :return: reflectivity raw values (0-1023).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>REFLECT_RAW mode:</b>
         Measure surface reflectivity for red light. The values
@@ -110,7 +133,7 @@ class ColorSensorEV3(Sensor):
 
         :return: ambient in % (0-100).
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>AMBIENT mode:</b>
         Measure ambient light intensity. The values are calibrated
@@ -125,7 +148,7 @@ class ColorSensorEV3(Sensor):
 
         :return: color constants corresponding to Color.[COLOR].
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>COLOR_DETECT mode:</b>
         Measure and discriminate the color. The discrimination is provided by the sensor itself.
@@ -133,22 +156,14 @@ class ColorSensorEV3(Sensor):
         """
         ...
 
-    @staticmethod
-    def get_color_name(color: Color) -> str:
-        """
-        :param color: Color to get the name of.
-        :return: English name of the provided color. This is a convenience function for UI or logging.
-        """
-        ...
-
-    def rgb_values_raw(self) -> RGB:
+    def rgb_values_raw(self) -> RawRGB:
         """
         Sets the sensor mode to `RGB_RAW` and return the last value.
 
         :return: RGB raw values (0-1023 each channel).
         You can access them with RGB.red, RGB.green and RGB.blue, or by using subscription (RGB[0], RGB[1], ...)
 
-        :raises brian.sensors.SensorIsNotReadyError: If the sensor is not ready.
+        :raises brian.sensors.SensorNotReadyError: If the sensor is not ready.
 
         <b>RGB_RAW mode:</b>
         Measure surface reflectivity for red, green and blue light. The values
