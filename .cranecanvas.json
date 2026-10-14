@@ -19,7 +19,7 @@
     "min": 0.2,
     "max": 1,
     "margin": 0.01,
-    "initialRadius": 0.215,
+    "initialRadius": 0.3,
     "initialYaw": 0,
     "initialEnd": 0
   },

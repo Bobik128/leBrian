@@ -101,7 +101,7 @@ async def initEndMotor():
     endMotor.hold()
 
 async def initExtendonMotor(
-    speed=100
+    speed=0.3
 ):
     global extendonMotor
     await asyncio.sleep(0.1)
@@ -119,8 +119,8 @@ async def initExtendonMotor(
     await asyncio.sleep(0.1)
     extendonMotor.reset_angle()
 
-    target_angle = -int((EXTENDON_MAX - EXTENDON_MIN) * EXTENDON_CONVERSION)
-    extendonMotor.hold()
+    target_angle = -int((EXTENDON_MAX - EXTENDON_MIN - 0.1) * EXTENDON_CONVERSION)
+    await moveExtendonTo(target_angle, speed=speed, acceleration=600.0)
 
 async def initYawMotor():
     global yawMotor
