@@ -17,13 +17,15 @@ overBrick: bool = False
 
 startTime: float
 
-max_angular_speed: float = 0.6
-max_extendon_speed: float = 0.25
-max_acceleration: float = 1.0
-max_end_motor_speed: float = 4.0
+default_yaw_speed: float = 100
+default_extension_speed: float = 0.25
+default_end_motor_speed: float = 100
+default_yaw_acceleration: float = 600.0
+default_extension_acceleration: float = 600.0
+default_end_acceleration: float = 1000.0
 
 async def main():
-    global runMotor, frontButton, angleButton, startTime, overBrick, max_acceleration, max_extendon_speed, max_angular_speed
+    global runMotor, frontButton, angleButton, startTime, overBrick, default_yaw_acceleration, default_extension_acceleration, default_end_acceleration
     print("Starting main")
     await asyncio.sleep(1)
     print("Init gyro")
@@ -40,12 +42,15 @@ async def main():
     await brick.waitForPressWithGyroCheck()
     print("Program started")
 
-    await crane.moveLinear(0.356433, 0.002862, 0, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_end_angular_speed=max_end_motor_speed, max_acceleration=max_acceleration)  # @crane:0d4078471721155934dfe7e3
-    await crane.moveLinear(0.309794, -0.385148, -80, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_end_angular_speed=max_end_motor_speed, max_acceleration=max_acceleration)  # @crane:386efeca860f91789af030f1
-    await crane.moveLinear(0.353302, -0.647924, -79.265985, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_end_angular_speed=max_end_motor_speed, max_acceleration=max_acceleration)  # @crane:fd4b03b249af2a8375b5411e
-    await crane.moveEnd(-3.398186, max_speed=200, max_acceleration=240)  # @crane:2b54300696cfee20bfa7c4cb
-    await crane.moveLinear(0.483737, -0.300785, 60, max_angular_speed=max_angular_speed, max_extension_speed=max_extendon_speed, max_end_angular_speed=max_end_motor_speed, max_acceleration=max_acceleration)  # @crane:dfddffe656ff5910a951f5e7
-    
+    while True:
+        await crane.moveTo(0.6, 0, 0, yaw_speed=default_yaw_speed, extendon_speed=default_extension_speed, end_speed=default_end_motor_speed, yaw_acceleration=default_yaw_acceleration, extendon_acceleration=default_extension_acceleration, end_acceleration=default_end_acceleration)  # @crane:1100f4d856d1a90182930f5c
+        await crane.moveTo(0.8, 0, 0, yaw_speed=default_yaw_speed, extendon_speed=default_extension_speed, end_speed=default_end_motor_speed, yaw_acceleration=default_yaw_acceleration, extendon_acceleration=default_extension_acceleration, end_acceleration=default_end_acceleration)  # @crane:7e6eb707f0a0ef13111165b8
+        # await crane.moveTo(0.2, -0.5, -90, yaw_speed=default_yaw_speed, extendon_speed=default_extension_speed, end_speed=default_end_motor_speed, yaw_acceleration=default_yaw_acceleration, extendon_acceleration=default_extension_acceleration, end_acceleration=default_end_acceleration)  # @crane:3ba6acdf5d83964c96ffe185
+        # await crane.moveTo(0.6, -0.5, -90, yaw_speed=default_yaw_speed, extendon_speed=default_extension_speed, end_speed=default_end_motor_speed, yaw_acceleration=default_yaw_acceleration, extendon_acceleration=default_extension_acceleration, end_acceleration=default_end_acceleration)  # @crane:a4b229df087af1a0accfdf35
+        # await crane.moveTo(0.8, 0, 0, yaw_speed=default_yaw_speed, extendon_speed=default_extension_speed, end_speed=default_end_motor_speed, yaw_acceleration=default_yaw_acceleration, extendon_acceleration=default_extension_acceleration, end_acceleration=default_end_acceleration)  # @crane:cda1d91a13d583197160a088
+        # await crane.moveTo(0.6, 0.5, 90, yaw_speed=default_yaw_speed, extendon_speed=default_extension_speed, end_speed=default_end_motor_speed, yaw_acceleration=default_yaw_acceleration, extendon_acceleration=default_extension_acceleration, end_acceleration=default_end_acceleration)  # @crane:0fb9a65aebf78f7542ccbec3
+        # await crane.moveTo(0.2, 0.5, 90, yaw_speed=default_yaw_speed, extendon_speed=default_extension_speed, end_speed=default_end_motor_speed, yaw_acceleration=default_yaw_acceleration, extendon_acceleration=default_extension_acceleration, end_acceleration=default_end_acceleration)  # @crane:0769c7f15fe1d7dadc71d627
+        # await crane.moveTo(0.3, 0, 0, yaw_speed=default_yaw_speed, extendon_speed=default_extension_speed, end_speed=default_end_motor_speed, yaw_acceleration=default_yaw_acceleration, extendon_acceleration=default_extension_acceleration, end_acceleration=default_end_acceleration)  # @crane:b6c894b256a7cd2d8a95e235
 try:
     asyncio.run(main())
 except Exception as error:

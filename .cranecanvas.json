@@ -36,15 +36,15 @@
     "showLabels": true,
     "backgroundOpacity": 1,
     "backgroundPage": 1,
-    "snap": false
+    "snap": true
   },
   "variables": {},
   "templates": [
     {
-      "id": "linear",
-      "name": "Move linear",
+      "id": "move_to",
+      "name": "Move to",
       "motion": "linear",
-      "prefix": "await crane.moveLinear(",
+      "prefix": "await crane.moveTo(",
       "kind": "symbol",
       "icon": "forward",
       "arguments": [
@@ -66,26 +66,38 @@
         {
           "name": "angular",
           "label": "Yaw speed (rad/s)",
-          "default": "max_angular_speed",
-          "keyword": "max_angular_speed"
+          "default": "default_yaw_speed",
+          "keyword": "yaw_speed"
         },
         {
           "name": "extension",
           "label": "Extension speed",
-          "default": "max_extendon_speed",
-          "keyword": "max_extension_speed"
+          "default": "default_extension_speed",
+          "keyword": "extendon_speed"
         },
         {
           "name": "end_motor",
           "label": "End motor speed (rad/s)",
-          "default": "max_end_motor_speed",
-          "keyword": "max_end_angular_speed"
+          "default": "default_end_motor_speed",
+          "keyword": "end_speed"
         },
         {
-          "name": "acceleration",
-          "label": "Acceleration",
-          "default": "max_acceleration",
-          "keyword": "max_acceleration"
+          "name": "yaw_acceleration",
+          "label": "Yaw acceleration",
+          "default": "default_yaw_acceleration",
+          "keyword": "yaw_acceleration"
+        },
+        {
+          "name": "extension_acceleration",
+          "label": "Extension acceleration",
+          "default": "default_extension_acceleration",
+          "keyword": "extendon_acceleration"
+        },
+        {
+          "name": "end_acceleration",
+          "label": "End acceleration",
+          "default": "default_end_acceleration",
+          "keyword": "end_acceleration"
         }
       ]
     },
@@ -93,26 +105,26 @@
       "id": "extension",
       "name": "Move extension",
       "motion": "extension",
-      "prefix": "await crane.moveExtendon(",
+      "prefix": "await crane.moveExtendonTo(",
       "kind": "symbol",
       "icon": "forward",
       "arguments": [
         {
-          "name": "length",
-          "label": "Length",
+          "name": "target",
+          "label": "Target",
           "default": "0.6"
         },
         {
           "name": "speed",
           "label": "Speed",
-          "default": "0.3",
-          "keyword": "max_speed"
+          "default": "default_extension_speed",
+          "keyword": "speed"
         },
         {
           "name": "acceleration",
           "label": "Acceleration",
-          "default": "0.5",
-          "keyword": "max_acceleration"
+          "default": "default_extension_acceleration",
+          "keyword": "acceleration"
         }
       ]
     },
@@ -120,7 +132,7 @@
       "id": "yaw",
       "name": "Move yaw",
       "motion": "yaw",
-      "prefix": "await crane.moveYaw(",
+      "prefix": "await crane.moveYawTo(",
       "kind": "symbol",
       "icon": "turn",
       "arguments": [
@@ -132,14 +144,14 @@
         {
           "name": "speed",
           "label": "Speed (°/s)",
-          "default": "45",
-          "keyword": "max_speed"
+          "default": "default_yaw_speed",
+          "keyword": "speed"
         },
         {
           "name": "acceleration",
           "label": "Acceleration (°/s²)",
-          "default": "120",
-          "keyword": "max_acceleration"
+          "default": "default_yaw_acceleration",
+          "keyword": "acceleration"
         }
       ]
     },
@@ -147,7 +159,7 @@
       "id": "end",
       "name": "Move end",
       "motion": "end",
-      "prefix": "await crane.moveEnd(",
+      "prefix": "await crane.moveEndTo(",
       "kind": "symbol",
       "icon": "turn",
       "arguments": [
@@ -159,14 +171,14 @@
         {
           "name": "speed",
           "label": "Speed (°/s)",
-          "default": "90",
-          "keyword": "max_speed"
+          "default": "default_end_speed",
+          "keyword": "speed"
         },
         {
           "name": "acceleration",
           "label": "Acceleration (°/s²)",
-          "default": "240",
-          "keyword": "max_acceleration"
+          "default": "default_end_acceleration",
+          "keyword": "acceleration"
         }
       ]
     }
@@ -256,6 +268,62 @@
       "id": "dfddffe656ff5910a951f5e7",
       "source": "src/main.py",
       "label": "Move linear",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "3ba6acdf5d83964c96ffe185",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "a4b229df087af1a0accfdf35",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "cda1d91a13d583197160a088",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "0fb9a65aebf78f7542ccbec3",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "0769c7f15fe1d7dadc71d627",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "b6c894b256a7cd2d8a95e235",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "1100f4d856d1a90182930f5c",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "7e6eb707f0a0ef13111165b8",
+      "source": "src/main.py",
+      "label": "Move to",
       "color": null,
       "scale": 1
     }
