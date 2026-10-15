@@ -171,7 +171,7 @@
         {
           "name": "speed",
           "label": "Speed (°/s)",
-          "default": "default_end_speed",
+          "default": "default_end_motor_speed",
           "keyword": "speed"
         },
         {
@@ -181,10 +181,26 @@
           "keyword": "acceleration"
         }
       ]
+    },
+    {
+      "id": "custom_mv9wbwcz",
+      "name": "Wait",
+      "motion": "linear",
+      "prefix": "await asyncio.sleep(",
+      "kind": "symbol",
+      "icon": "forward",
+      "arguments": [
+        {
+          "name": "time",
+          "label": "Time (S)",
+          "default": "0.5"
+        }
+      ]
     }
   ],
   "sourceFiles": [
-    "src/main.py"
+    "src/main.py",
+    "src/visual_test.py"
   ],
   "objects": [
     {
@@ -394,6 +410,153 @@
       "id": "59ac7b78c1564a3533eee5fa",
       "source": "src/main.py",
       "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "8709264163944eb49b827443",
+      "source": "src/visual_test.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "252ee0b1280f44512fb76fa6",
+      "source": "src/visual_test.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "092eec04fdfa6876aa6b16e5",
+      "source": "src/visual_test.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "59ee0f2d2e414b60fd8ace48",
+      "source": "src/visual_test.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 0.5
+    },
+    {
+      "id": "7ef1ce82ce7bb40a0ca5cced",
+      "source": "src/visual_test.py",
+      "label": "Move extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "3dcee7f8950fd78ae2a3bc9f",
+      "source": "src/visual_test.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "d671d24d0b3d0c3938d1e444",
+      "source": "src/visual_test.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "1077bf184e67a22030a64089",
+      "source": "src/visual_test.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "ebd8e0a63a7aae9751e8128d",
+      "source": "src/visual_test.py",
+      "label": "Move extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "89b401704c8fd96802f81b21",
+      "source": "src/visual_test.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "a2ed3481214e0a3422f844d1",
+      "source": "src/visual_test.py",
+      "label": "Move yaw",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "d3e8909acd28f59c8fd9ea92",
+      "source": "src/visual_test.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "a115023da934db11af3c20d7",
+      "source": "src/visual_test.py",
+      "label": "Move extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "3b12e04e6406f6d7a9c539f3",
+      "source": "src/visual_test.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "cc36d227b2cdd157bcd95908",
+      "source": "src/visual_test.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "7119bc09beb7b637b9a0e57b",
+      "source": "src/visual_test.py",
+      "label": "Move yaw",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "1438eba52ffac1b037ff4107",
+      "source": "src/visual_test.py",
+      "label": "Move extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "18c34ac72224595199d3c4e5",
+      "source": "src/visual_test.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 0.5
+    },
+    {
+      "id": "87a763f4fafdea0c3b9bd3c0",
+      "source": "src/visual_test.py",
+      "label": "Move yaw",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "a554894b4ef67ff2940e8692",
+      "source": "src/visual_test.py",
+      "label": "Move extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "6ea567df4fc92256704bbf26",
+      "source": "src/visual_test.py",
+      "label": "sleep",
       "color": null,
       "scale": 1
     }
