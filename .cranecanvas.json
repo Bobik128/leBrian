@@ -183,17 +183,137 @@
       ]
     },
     {
-      "id": "custom_mv9wbwcz",
-      "name": "Wait",
-      "motion": "linear",
-      "prefix": "await asyncio.sleep(",
+      "id": "yaw_end",
+      "name": "Yaw + end",
+      "motion": "yaw-end",
+      "prefix": "await crane.moveYawEnd(",
+      "kind": "symbol",
+      "icon": "turn",
+      "arguments": [
+        {
+          "name": "angle_degrees",
+          "label": "Yaw (°)",
+          "default": "45"
+        },
+        {
+          "name": "absolute_angle_degrees",
+          "label": "Absolute end (°)",
+          "default": "0"
+        },
+        {
+          "name": "yaw_speed",
+          "label": "Yaw speed (°/s)",
+          "default": "45",
+          "keyword": "max_yaw_speed"
+        },
+        {
+          "name": "end_speed",
+          "label": "End speed (°/s)",
+          "default": "90",
+          "keyword": "max_end_speed"
+        }
+      ]
+    },
+    {
+      "id": "yaw_extension",
+      "name": "Yaw + extension",
+      "motion": "yaw-extension",
+      "prefix": "await crane.moveYawExtendon(",
       "kind": "symbol",
       "icon": "forward",
       "arguments": [
         {
-          "name": "time",
-          "label": "Time (S)",
-          "default": "0.5"
+          "name": "angle_degrees",
+          "label": "Yaw (°)",
+          "default": "45"
+        },
+        {
+          "name": "length",
+          "label": "Length",
+          "default": "0.6"
+        },
+        {
+          "name": "yaw_speed",
+          "label": "Yaw speed (°/s)",
+          "default": "45",
+          "keyword": "max_yaw_speed"
+        },
+        {
+          "name": "extension_speed",
+          "label": "Extension speed (units/s)",
+          "default": "0.3",
+          "keyword": "max_extension_speed"
+        }
+      ]
+    },
+    {
+      "id": "extension_end",
+      "name": "Extension + end",
+      "motion": "extension-end",
+      "prefix": "await crane.moveExtendonEnd(",
+      "kind": "symbol",
+      "icon": "forward",
+      "arguments": [
+        {
+          "name": "length",
+          "label": "Length",
+          "default": "0.6"
+        },
+        {
+          "name": "absolute_angle_degrees",
+          "label": "Absolute end (°)",
+          "default": "90"
+        },
+        {
+          "name": "extension_speed",
+          "label": "Extension speed (units/s)",
+          "default": "0.3",
+          "keyword": "max_extension_speed"
+        },
+        {
+          "name": "end_speed",
+          "label": "End speed (°/s)",
+          "default": "90",
+          "keyword": "max_end_speed"
+        }
+      ]
+    },
+    {
+      "id": "wait",
+      "name": "Wait",
+      "motion": "passive",
+      "prefix": "await asyncio.sleep(",
+      "kind": "symbol",
+      "icon": "wait",
+      "arguments": [
+        {
+          "name": "seconds",
+          "label": "Duration (s)",
+          "default": "1.0"
+        }
+      ]
+    },
+    {
+      "id": "wait_button",
+      "name": "Wait for button",
+      "motion": "passive",
+      "prefix": "await brick.waitForPress(",
+      "kind": "symbol",
+      "icon": "sensor",
+      "arguments": []
+    },
+    {
+      "id": "function",
+      "name": "Function / action",
+      "motion": "passive",
+      "prefix": "print(",
+      "kind": "symbol",
+      "icon": "sensor",
+      "arguments": [
+        {
+          "name": "message",
+          "label": "Message",
+          "default": "\"Action\""
         }
       ]
     }
@@ -414,32 +534,11 @@
       "scale": 1
     },
     {
-      "id": "8709264163944eb49b827443",
-      "source": "src/visual_test.py",
-      "label": "Move to",
-      "color": null,
-      "scale": 1
-    },
-    {
-      "id": "252ee0b1280f44512fb76fa6",
-      "source": "src/visual_test.py",
-      "label": "Move to",
-      "color": null,
-      "scale": 1
-    },
-    {
       "id": "092eec04fdfa6876aa6b16e5",
       "source": "src/visual_test.py",
       "label": "Move to",
       "color": null,
       "scale": 1
-    },
-    {
-      "id": "59ee0f2d2e414b60fd8ace48",
-      "source": "src/visual_test.py",
-      "label": "Move end",
-      "color": null,
-      "scale": 0.5
     },
     {
       "id": "7ef1ce82ce7bb40a0ca5cced",
@@ -498,67 +597,89 @@
       "scale": 1
     },
     {
-      "id": "a115023da934db11af3c20d7",
+      "id": "231c2f3e41d3f1cfeace0e90",
+      "source": "src/visual_test.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "8acdada54802017cd340f51b",
+      "source": "src/visual_test.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "a0c62a1cd2a14d828e09e029",
+      "source": "src/visual_test.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "9cac96aac5a92fa62d414187",
       "source": "src/visual_test.py",
       "label": "Move extension",
       "color": null,
       "scale": 1
     },
     {
-      "id": "3b12e04e6406f6d7a9c539f3",
+      "id": "00bb002ef154ae48b200f769",
       "source": "src/visual_test.py",
       "label": "Move end",
       "color": null,
       "scale": 1
     },
     {
-      "id": "cc36d227b2cdd157bcd95908",
+      "id": "95bc751b535bc31d5b93a030",
+      "source": "src/visual_test.py",
+      "label": "Wait",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "eae8ce0f19280b23f5dec506",
       "source": "src/visual_test.py",
       "label": "Move end",
       "color": null,
       "scale": 1
     },
     {
-      "id": "7119bc09beb7b637b9a0e57b",
+      "id": "b8ef9af68aefb52b7c0ee4df",
       "source": "src/visual_test.py",
       "label": "Move yaw",
       "color": null,
       "scale": 1
     },
     {
-      "id": "1438eba52ffac1b037ff4107",
+      "id": "45a64f9d87223f7e05ab23cc",
       "source": "src/visual_test.py",
       "label": "Move extension",
       "color": null,
       "scale": 1
     },
     {
-      "id": "18c34ac72224595199d3c4e5",
-      "source": "src/visual_test.py",
-      "label": "Move end",
-      "color": null,
-      "scale": 0.5
-    },
-    {
-      "id": "87a763f4fafdea0c3b9bd3c0",
+      "id": "b0c2fb9a66cc9f696d5604a9",
       "source": "src/visual_test.py",
       "label": "Move yaw",
       "color": null,
       "scale": 1
     },
     {
-      "id": "a554894b4ef67ff2940e8692",
+      "id": "da3c3cb86299fd748d99e2ec",
       "source": "src/visual_test.py",
-      "label": "Move extension",
+      "label": "Move end",
       "color": null,
       "scale": 1
     },
     {
-      "id": "6ea567df4fc92256704bbf26",
+      "id": "97376d074b29b2d3120a2108",
       "source": "src/visual_test.py",
-      "label": "sleep",
+      "label": "Move extension",
       "color": null,
       "scale": 1
     }
-  ]
+  ],
+  "templateVersion": 2
 }
