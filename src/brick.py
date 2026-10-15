@@ -3,6 +3,8 @@ import asyncio
 import time
 import sys
 
+from brian.buttons import UiEventsListener
+
 gyro: sensors.EV3.GyroSensorEV3
 color: sensors.EV3.ColorSensorEV3
 sonar: sensors.EV3.UltrasonicSensorEV3
@@ -20,7 +22,7 @@ async def initGyro(port):
     gyro.reboot()
     await asyncio.sleep(1.0)
 
-    gyro.set_mode(gyro.Mode.ANGLE_AND_SPEED)
+    gyro.set_mode(gyro.Mode.ANGLE)
 
     start = time.ticks_ms()
     while not gyro.is_ready():
@@ -41,34 +43,34 @@ async def initSonic(port: sensors.SensorPort):
     sonar = sensors.EV3.UltrasonicSensorEV3(port)
 
 async def waitForPress():
-    listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
+    listener: UiEventsListener = UiEventsListener()
     while True:
-        knob: uicontrol.UiEventsListener.KnobEvent = listener.knob_event_since_last()
+        knob: UiEventsListener.KnobEvent = listener.knob_event_since_last()
         if knob.just_pressed:
             break
         await asyncio.sleep(0.01)
 
 def isPressed():
-    listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
-    knob: uicontrol.UiEventsListener.KnobEvent = listener.knob_event_since_last()
+    listener: UiEventsListener = UiEventsListener()
+    knob: UiEventsListener.KnobEvent = listener.knob_event_since_last()
     return knob.just_pressed
 
 async def waitForPressWithGyroCheck():
-    listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
+    listener: UiEventsListener = UiEventsListener()
     while True:
         if abs(gyroAngle()) > 5:
             print("GYRO DRIFT")
-        knob: uicontrol.UiEventsListener.KnobEvent = listener.knob_event_since_last()
+        knob: UiEventsListener.KnobEvent = listener.knob_event_since_last()
         if knob.just_pressed:
             break
         await asyncio.sleep(0.01)
 
 async def waitForAnyPress():
-    listener: uicontrol.UiEventsListener = uicontrol.UiEventsListener()
+    listener: UiEventsListener = UiEventsListener()
     while True:
         if abs(gyroAngle()) > 5:
             print("GYRO DRIFT")
-        buttons: uicontrol.UiEventsListener.ButtonsEvent = listener.buttons_event_since_last()
+        buttons: UiEventsListener.ButtonsEvent = listener.buttons_event_since_last()
         if buttons.top_right.just_pressed:
             return 1
         elif buttons.top_left.just_pressed:
@@ -79,10 +81,6 @@ async def waitForAnyPress():
             return 4
         await asyncio.sleep(0.01)
 
-def gyroAngleAndSpeed():
-    if gyro is None or not gyro.is_ready():
-        raise RuntimeError("Gyro not ready")
-    return gyro.angle_and_speed()
 
 def gyroAngle():
-    return gyroAngleAndSpeed()[0]
+    return gyro.angle()

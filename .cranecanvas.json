@@ -26,7 +26,7 @@
   "appearance": {
     "theme": "auto",
     "textSize": 13,
-    "dotSize": 7,
+    "dotSize": 8,
     "headingLength": 25,
     "pathWidth": 2.5,
     "palette": "spectrum",
@@ -36,7 +36,7 @@
     "showLabels": true,
     "backgroundOpacity": 1,
     "backgroundPage": 1,
-    "snap": true
+    "snap": false
   },
   "variables": {},
   "templates": [
@@ -322,6 +322,76 @@
     },
     {
       "id": "7e6eb707f0a0ef13111165b8",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "6a50f87c2f2e6c41178e5ffb",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "7208cfa759ecddd29f2ededb",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "fa421c488adbdfb3b59832a3",
+      "source": "src/main.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 0.5
+    },
+    {
+      "id": "8f13254fdec68616ad3681da",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "c8c344b0fb543eb65b0ff70b",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "1642b0b7cde7840595e75fc4",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "c1b853749c38a47bc5781208",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "3eb99a885f970e5916330198",
+      "source": "src/main.py",
+      "label": "Move extension",
+      "color": null,
+      "scale": 0.5
+    },
+    {
+      "id": "37757c0fccb2cf59ac091e2b",
+      "source": "src/main.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 0.5
+    },
+    {
+      "id": "59ac7b78c1564a3533eee5fa",
       "source": "src/main.py",
       "label": "Move to",
       "color": null,
