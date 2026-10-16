@@ -11,13 +11,13 @@ endMotor = None
 extendonResetButton = None
 
 GYRO_SIGN = -1.0
-EXTENDON_CONVERSION = 1700.0
+EXTENDON_CONVERSION = 1900.0
 EXTENDON_MAX = 1.0
 EXTENDON_MIN = 0.2
 END_RATIO = -0.5988
 YAW_RATIO = 0.21
 
-KP: float = 2.6
+KP: float = 3.6
 KI: float = 0.001
 KD: float = 0.0001
 
@@ -55,6 +55,10 @@ async def moveYawTo(target_angle_deg: float, speed: float = 100.0, acceleration:
     yawMotor.hold()
 
 async def moveEndTo(target_deg: float, speed: float = 100.0, acceleration: float = 600.0):
+    global yawMotor, GYRO_SIGN
+    await moveEndToRaw(int(target_deg - brick.gyroAngle() * GYRO_SIGN))
+
+async def moveEndToRaw(target_deg: float, speed: float = 100.0, acceleration: float = 600.0):
     global endMotor
     target_angle = int(target_deg / END_RATIO)
     # endMotor.set_acceleration_limit(int(acceleration))
@@ -97,7 +101,7 @@ async def moveTo(
     await asyncio.gather(
         moveYawTo(yaw_target, speed=yaw_speed, acceleration=yaw_acceleration),
         moveExtendonTo(extendon_target, speed=extendon_speed, acceleration=extendon_acceleration),
-        moveEndTo(int(end_angle - yaw_target), speed=end_speed, acceleration=end_acceleration)
+        moveEndToRaw(int(end_angle - yaw_target), speed=end_speed, acceleration=end_acceleration)
     )
 
 async def initEndMotor():

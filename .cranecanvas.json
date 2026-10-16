@@ -8,7 +8,7 @@
   "grid": {
     "originX": 930,
     "originY": 1260,
-    "pixelsPerUnit": 1098.001,
+    "pixelsPerUnit": 1218.001,
     "rotation": 90,
     "flipZ": false,
     "step": 0.1,
@@ -677,6 +677,48 @@
       "id": "97376d074b29b2d3120a2108",
       "source": "src/visual_test.py",
       "label": "Move extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "8bd5ef2e031e6013e1299a46",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "abefd9ab22b26730240932d1",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "9766f74de4d2b5f2d309c879",
+      "source": "src/main.py",
+      "label": "Move yaw",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "9b7802af4765fa05f35f448c",
+      "source": "src/main.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 0.5
+    },
+    {
+      "id": "1b2df7a1d58c6e7b000511af",
+      "source": "src/main.py",
+      "label": "Move extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "33f302209d2f9ffd39646d71",
+      "source": "src/main.py",
+      "label": "Move end",
       "color": null,
       "scale": 1
     }

@@ -35,8 +35,15 @@ async def initGyro(port):
 async def initColor(port: sensors.SensorPort):
     global color
     color = sensors.EV3.ColorSensorEV3(port)
+    color.set_mode(color.Mode.COLOR_DETECT)
     while not color.is_ready():
         asyncio.sleep(0.1)
+
+async def getColor():
+    global color
+    if color is None:
+        raise RuntimeError("Color sensor not initialized")
+    return color.detected_color()
 
 async def initSonic(port: sensors.SensorPort):
     global sonar
