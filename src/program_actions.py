@@ -23,13 +23,12 @@ async def program():
 
     await crane.moveYawAndEnd(-4.661187, 108.691649, yaw_speed=35, end_speed=60, yaw_acceleration=config.default_yaw_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:bc108c4c490cbc035a0b5ba8
     await helper.checkColor(0.33, 1)  # @crane:128e39bbbb94f3385ceb3ffd
-    await crane.moveEndTo(205.634354, speed=50, acceleration=config.default_end_acceleration)  # @crane:7d9b743546744709860e2bef
-    await crane.moveTo(0.474674, -0.265576, 198.762396, yaw_speed=config.default_yaw_speed, extendon_speed=0.15, end_speed=config.default_end_motor_speed, yaw_acceleration=config.default_yaw_acceleration, extendon_acceleration=config.default_extension_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:3bb399a10716d12f0858e06e
-    await crane.moveTo(0.380305, -0.425497, 127.893971, yaw_speed=30, extendon_speed=0.15, end_speed=105, yaw_acceleration=config.default_yaw_acceleration, extendon_acceleration=config.default_extension_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:0b54d9380436896e2a31b034
-    await crane.moveTo(0.248759, -0.378926, 71.759982, yaw_speed=30, extendon_speed=0.15, end_speed=105, yaw_acceleration=config.default_yaw_acceleration, extendon_acceleration=config.default_extension_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:ce18d8a39dc8ec89c483f311
-    await crane.moveTo(0.227201, -0.201876, 71.759982, yaw_speed=config.default_yaw_speed, extendon_speed=config.default_extension_speed, end_speed=config.default_end_motor_speed, yaw_acceleration=config.default_yaw_acceleration, extendon_acceleration=config.default_extension_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:e20d274332a77ab66dd3e107
-    await crane.moveEndTo(86.045276, speed=config.default_end_motor_speed, acceleration=config.default_end_acceleration)  # @crane:d7f7d3d399fa13b37e45c961
-
+    await crane.moveEndTo(224.657895, speed=50, acceleration=config.default_end_acceleration)  # @crane:7d9b743546744709860e2bef
+    await crane.moveTo(0.38619, -0.198044, 224.657895, yaw_speed=config.default_yaw_speed, extendon_speed=config.default_extension_speed, end_speed=config.default_end_motor_speed, yaw_acceleration=config.default_yaw_acceleration, extendon_acceleration=config.default_extension_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:d6d7179925c3615cdfdbe99e
+    await crane.rotateRoundOffPivot(-270, angular_speed_deg=config.default_end_motor_speed_off_pivot)  # @crane:ebeb546fff47b728e293a030
+    await crane.moveTo(0.273904, -0.165517, 90, yaw_speed=config.default_yaw_speed, extendon_speed=config.default_extension_speed, end_speed=config.default_end_motor_speed, yaw_acceleration=config.default_yaw_acceleration, extendon_acceleration=config.default_extension_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:8b3a9e317e0290ad2dd280d6
+    await crane.moveExtendonTo(0.274125, speed=config.default_extension_speed, acceleration=config.default_extension_acceleration)  # @crane:c8d8bbb61893e51e4d66f570
+    
     # await crane.moveExtendonTo(0.542534, speed=config.default_extension_speed, acceleration=config.default_extension_acceleration)  # @crane:ec26477964aa4734373c7e62
     # await crane.moveEndTo(218.102573, speed=config.default_end_motor_speed, acceleration=config.default_end_acceleration)  # @crane:dd780da08c825d2debf419ee
     # await crane.moveExtendonTo(0.412215, speed=config.default_extension_speed, acceleration=config.default_extension_acceleration)  # @crane:53d9e9cc21128d3929443ae8

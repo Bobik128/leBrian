@@ -126,6 +126,51 @@ async def moveEndToRelative(angle: float, speed: float, shortest_path: bool = Tr
     else:
         await moveEndToRaw(angle, speed=speed, acceleration=1000)
 
+async def rotateRoundOffPivot(
+        target_end_angle: float, 
+        radius: float = 0.15, 
+        angular_speed_deg: float = 100
+    ):
+    start_yaw: float = brick.gyroAngle() * GYRO_SIGN
+    start_end_rel: float = endMotor.current_angle() * END_RATIO
+    start_end_abs: float = start_end_rel + start_yaw
+    start_length = extendonMotor.current_angle() / EXTENDON_CONVERSION
+
+    if start_end_abs - target_end_angle < 0:
+        angular_speed_deg = -angular_speed_deg
+
+    angular_speed_rad = math.radians(angular_speed_deg)
+
+    # get knee pivot
+    yaw_rad = math.radians(start_yaw)
+    end_abs_rad = math.radians(start_end_abs)
+    x_center: float = math.cos(yaw_rad) * start_length + math.cos(end_abs_rad) * radius
+    y_center: float = math.sin(yaw_rad) * start_length + math.sin(end_abs_rad) * radius
+
+    dist_to_center: float = math.sqrt(x_center**2 + y_center**2)
+
+    # main loop
+    while (abs(start_end_rel - endMotor.current_angle() * END_RATIO) < abs(start_end_abs - target_end_angle)):
+        alpha = math.radians((endMotor.current_angle() * END_RATIO - 90) % 360)
+        x = radius * math.cos(alpha)
+        y = radius * math.sin(alpha)
+
+        beta = math.atan2(x, y + dist_to_center)
+        dist_to_knee: float = math.sqrt((dist_to_center + y)**2 + x**2)
+
+        v_of_extendon: float = math.cos(alpha + beta) * angular_speed_rad * radius
+        v_of_yaw: float = math.sin(alpha + beta) * (angular_speed_rad * radius / dist_to_knee)
+
+        yawMotor.run_at_speed(math.degrees(v_of_yaw) / YAW_RATIO)
+        extendonMotor.run_at_speed(v_of_extendon * EXTENDON_CONVERSION)
+        endMotor.run_at_speed(angular_speed_deg / END_RATIO)
+
+        await asyncio.sleep(0.01)
+    
+    yawMotor.hold()
+    extendonMotor.hold()
+    endMotor.hold()
+
 async def moveTo(
         x: float, 
         y: float, 
@@ -140,6 +185,33 @@ async def moveTo(
 
     yaw_target = math.degrees(math.atan2(y, x))
     extendon_target = math.sqrt(x**2 + y**2)
+    await asyncio.gather(
+        moveYawTo(yaw_target, speed=yaw_speed, acceleration=yaw_acceleration),
+        moveExtendonTo(extendon_target, speed=extendon_speed, acceleration=extendon_acceleration),
+        moveEndToRaw(int(end_angle - yaw_target), speed=end_speed, acceleration=end_acceleration)
+    )
+
+async def moveToSynced( # computes the speeds so all three effectors arrive at the same time
+        x: float, 
+        y: float, 
+        end_angle: float,
+        time_s: float, 
+        yaw_acceleration: float = 600.0, 
+        extendon_acceleration: float = 600.0, 
+        end_acceleration: float = 1000.0
+    ):
+
+    yaw_target = math.degrees(math.atan2(y, x))
+    extendon_target = math.sqrt(x**2 + y**2)
+
+    yaw_now = brick.gyroAngle() * GYRO_SIGN
+    extendon_now = extendonMotor.current_angle() / EXTENDON_CONVERSION
+    end_now = endMotor.current_angle() * END_RATIO + yaw_now
+
+    extendon_speed = abs(extendon_now - extendon_target) / time_s
+    yaw_speed = abs(yaw_now - yaw_target) / time_s
+    end_speed = abs(end_now - end_angle) / time_s
+
     await asyncio.gather(
         moveYawTo(yaw_target, speed=yaw_speed, acceleration=yaw_acceleration),
         moveExtendonTo(extendon_target, speed=extendon_speed, acceleration=extendon_acceleration),

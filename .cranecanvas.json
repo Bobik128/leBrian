@@ -333,6 +333,76 @@
           "keyword": "acceleration"
         }
       ]
+    },
+    {
+      "id": "custom_mvieloux",
+      "name": "Move to Synced",
+      "motion": "linear",
+      "prefix": "await crane.moveToSynced(",
+      "kind": "symbol",
+      "icon": "forward",
+      "arguments": [
+        {
+          "name": "target_x",
+          "label": "X",
+          "default": "0.4"
+        },
+        {
+          "name": "target_z",
+          "label": "Z",
+          "default": "0.4"
+        },
+        {
+          "name": "absolute_end_angle",
+          "label": "Absolute end (°)",
+          "default": "0"
+        },
+        {
+          "name": "time_s",
+          "label": "Move Time",
+          "default": "config.default_synced_move_time",
+          "keyword": "time_s"
+        },
+        {
+          "name": "yaw_acceleration",
+          "label": "Yaw Acceleration",
+          "default": "config.default_yaw_acceleration",
+          "keyword": "yaw_acceleration"
+        },
+        {
+          "name": "extendon_acceleration",
+          "label": "Extendon Acceleration",
+          "default": "config.default_extension_acceleration",
+          "keyword": "extendon_acceleration"
+        },
+        {
+          "name": "end_acceleration",
+          "label": "End Acceleration",
+          "default": "config.default_end_acceleration",
+          "keyword": "end_acceleration"
+        }
+      ]
+    },
+    {
+      "id": "custom_mvier2hn",
+      "name": "Rotate Around Offset Pivot",
+      "motion": "end",
+      "prefix": "await crane.rotateRoundOffPivot(",
+      "kind": "symbol",
+      "icon": "forward",
+      "arguments": [
+        {
+          "name": "target_end",
+          "label": "Abs. end target",
+          "default": "45"
+        },
+        {
+          "name": "angular_speed",
+          "label": "Angluar speed",
+          "default": "config.default_end_motor_speed_off_pivot",
+          "keyword": "angular_speed_deg"
+        }
+      ]
     }
   ],
   "sourceFiles": [
@@ -1059,6 +1129,34 @@
       "id": "0b54d9380436896e2a31b034",
       "source": "src/program_actions.py",
       "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "d6d7179925c3615cdfdbe99e",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "ebeb546fff47b728e293a030",
+      "source": "src/program_actions.py",
+      "label": "Rotate Around Offset Pivot",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "8b3a9e317e0290ad2dd280d6",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "c8d8bbb61893e51e4d66f570",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
       "color": null,
       "scale": 1
     }
