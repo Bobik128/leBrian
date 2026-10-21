@@ -4,12 +4,12 @@
     "width": 1920,
     "height": 2518
   },
-  "background": ".cranecanvas/assets/78c4aaa6ab0e45637e24f8f3.jpg",
+  "background": ".cranecanvas/assets/2dbc5c10fc9f441ff69ec7c3.png",
   "grid": {
     "originX": 930,
     "originY": 1260,
     "pixelsPerUnit": 1218.001,
-    "rotation": 90,
+    "rotation": -90,
     "flipZ": false,
     "step": 0.1,
     "axisLabel": "Z",
@@ -66,65 +66,58 @@
         {
           "name": "angular",
           "label": "Yaw speed (rad/s)",
-          "default": "default_yaw_speed",
+          "default": "config.default_yaw_speed",
           "keyword": "yaw_speed"
         },
         {
           "name": "extension",
           "label": "Extension speed",
-          "default": "default_extension_speed",
+          "default": "config.default_extension_speed",
           "keyword": "extendon_speed"
         },
         {
           "name": "end_motor",
           "label": "End motor speed (rad/s)",
-          "default": "default_end_motor_speed",
+          "default": "config.default_end_motor_speed",
           "keyword": "end_speed"
         },
         {
           "name": "yaw_acceleration",
           "label": "Yaw acceleration",
-          "default": "default_yaw_acceleration",
+          "default": "config.default_yaw_acceleration",
           "keyword": "yaw_acceleration"
         },
         {
           "name": "extension_acceleration",
           "label": "Extension acceleration",
-          "default": "default_extension_acceleration",
+          "default": "config.default_extension_acceleration",
           "keyword": "extendon_acceleration"
         },
         {
           "name": "end_acceleration",
           "label": "End acceleration",
-          "default": "default_end_acceleration",
+          "default": "config.default_end_acceleration",
           "keyword": "end_acceleration"
         }
       ]
     },
     {
       "id": "extension",
-      "name": "Move extension",
+      "name": "Chceck Color",
       "motion": "extension",
-      "prefix": "await crane.moveExtendonTo(",
+      "prefix": "await helper.checkColor(",
       "kind": "symbol",
       "icon": "forward",
       "arguments": [
         {
-          "name": "target",
-          "label": "Target",
-          "default": "0.6"
+          "name": "placeholder",
+          "label": "Placeholder",
+          "default": "0.33"
         },
         {
-          "name": "speed",
-          "label": "Speed",
-          "default": "default_extension_speed",
-          "keyword": "speed"
-        },
-        {
-          "name": "acceleration",
-          "label": "Acceleration",
-          "default": "default_extension_acceleration",
-          "keyword": "acceleration"
+          "name": "index",
+          "label": "Index",
+          "default": "1"
         }
       ]
     },
@@ -144,13 +137,13 @@
         {
           "name": "speed",
           "label": "Speed (°/s)",
-          "default": "default_yaw_speed",
+          "default": "config.default_yaw_speed",
           "keyword": "speed"
         },
         {
           "name": "acceleration",
           "label": "Acceleration (°/s²)",
-          "default": "default_yaw_acceleration",
+          "default": "config.default_yaw_acceleration",
           "keyword": "acceleration"
         }
       ]
@@ -171,13 +164,13 @@
         {
           "name": "speed",
           "label": "Speed (°/s)",
-          "default": "default_end_motor_speed",
+          "default": "config.default_end_motor_speed",
           "keyword": "speed"
         },
         {
           "name": "acceleration",
           "label": "Acceleration (°/s²)",
-          "default": "default_end_acceleration",
+          "default": "config.default_end_acceleration",
           "keyword": "acceleration"
         }
       ]
@@ -186,7 +179,7 @@
       "id": "yaw_end",
       "name": "Yaw + end",
       "motion": "yaw-end",
-      "prefix": "await crane.moveYawEnd(",
+      "prefix": "await crane.moveYawAndEnd(",
       "kind": "symbol",
       "icon": "turn",
       "arguments": [
@@ -203,14 +196,26 @@
         {
           "name": "yaw_speed",
           "label": "Yaw speed (°/s)",
-          "default": "45",
-          "keyword": "max_yaw_speed"
+          "default": "config.default_yaw_speed",
+          "keyword": "yaw_speed"
         },
         {
           "name": "end_speed",
           "label": "End speed (°/s)",
-          "default": "90",
-          "keyword": "max_end_speed"
+          "default": "config.default_end_motor_speed",
+          "keyword": "end_speed"
+        },
+        {
+          "name": "yaw_acceleration",
+          "label": "Yaw acceleration",
+          "default": "config.default_yaw_acceleration",
+          "keyword": "yaw_acceleration"
+        },
+        {
+          "name": "end_acceleration",
+          "label": "End acceleration",
+          "default": "config.default_end_acceleration",
+          "keyword": "end_acceleration"
         }
       ]
     },
@@ -250,7 +255,7 @@
       "id": "extension_end",
       "name": "Extension + end",
       "motion": "extension-end",
-      "prefix": "await crane.moveExtendonEnd(",
+      "prefix": "await crane.moveExtendonAndEnd(",
       "kind": "symbol",
       "icon": "forward",
       "arguments": [
@@ -268,13 +273,13 @@
           "name": "extension_speed",
           "label": "Extension speed (units/s)",
           "default": "0.3",
-          "keyword": "max_extension_speed"
+          "keyword": "extendon_speed"
         },
         {
           "name": "end_speed",
           "label": "End speed (°/s)",
           "default": "90",
-          "keyword": "max_end_speed"
+          "keyword": "end_speed"
         }
       ]
     },
@@ -303,24 +308,37 @@
       "arguments": []
     },
     {
-      "id": "function",
-      "name": "Function / action",
-      "motion": "passive",
-      "prefix": "print(",
+      "id": "custom_mvi5v02g",
+      "name": "Move Extendon",
+      "motion": "extension",
+      "prefix": "await crane.moveExtendonTo(",
       "kind": "symbol",
-      "icon": "sensor",
+      "icon": "forward",
       "arguments": [
         {
-          "name": "message",
-          "label": "Message",
-          "default": "\"Action\""
+          "name": "dist",
+          "label": "Dist",
+          "default": "0.4"
+        },
+        {
+          "name": "speed",
+          "label": "Speed",
+          "default": "config.default_extension_speed",
+          "keyword": "speed"
+        },
+        {
+          "name": "acceleration",
+          "label": "Acceleration",
+          "default": "config.default_extension_acceleration",
+          "keyword": "acceleration"
         }
       ]
     }
   ],
   "sourceFiles": [
     "src/main.py",
-    "src/visual_test.py"
+    "src/visual_test.py",
+    "src/program_actions.py"
   ],
   "objects": [
     {
@@ -719,6 +737,328 @@
       "id": "33f302209d2f9ffd39646d71",
       "source": "src/main.py",
       "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "192cdddbcb435bff0fdfb74e",
+      "source": "src/main.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "128e39bbbb94f3385ceb3ffd",
+      "source": "src/main.py",
+      "label": "Chceck Color",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "8bd5ef2e031e6013e1299a46",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "abefd9ab22b26730240932d1",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "9766f74de4d2b5f2d309c879",
+      "source": "src/program_actions.py",
+      "label": "Move yaw",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "9b7802af4765fa05f35f448c",
+      "source": "src/program_actions.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 0.5
+    },
+    {
+      "id": "128e39bbbb94f3385ceb3ffd",
+      "source": "src/program_actions.py",
+      "label": "Chceck Color",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "c9e1b4a9ee7c25ddaf9abc93",
+      "source": "src/program_actions.py",
+      "label": "Function / action",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "443e25f08e3b3847777c7b50",
+      "source": "src/program_actions.py",
+      "label": "Function / action",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "2ed5c70df64ede2f071b374a",
+      "source": "src/program_actions.py",
+      "label": "Yaw + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "bc108c4c490cbc035a0b5ba8",
+      "source": "src/program_actions.py",
+      "label": "Yaw + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "a637cf1ac88424af66c0d068",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "08dd0ed242aaf2eeb3da515d",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "f631dad89605d078b4dfab17",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "ed5916d360a35d58afdd6c8d",
+      "source": "src/program_actions.py",
+      "label": "Yaw + extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "5efcfc84754f9887a8187943",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "609f99297be212639eafc1b7",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "f1be49363d6f14a14e376b02",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "ec26477964aa4734373c7e62",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "dd780da08c825d2debf419ee",
+      "source": "src/program_actions.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "53d9e9cc21128d3929443ae8",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "6fb473f2b2fac4808e56d96a",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "dd176be5e108125c6308fe6b",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "d7a778394462871366d03f92",
+      "source": "src/program_actions.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "718b77a13feb8754c09f2425",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "c2d3f038e02697a0636dcba9",
+      "source": "src/program_actions.py",
+      "label": "Move yaw",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "30cb86716cb23acb95631196",
+      "source": "src/program_actions.py",
+      "label": "Yaw + extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "b88a2491ee1f8f13b797e0b5",
+      "source": "src/program_actions.py",
+      "label": "Extension + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "a71e802435a44d921188baa4",
+      "source": "src/program_actions.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "090a7b4f2f5dcc728d3763f8",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "7fdf4cd6eb530fd3a95893c9",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "be27318233a3543bd1292019",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "b1311f69e3a0511370eb5898",
+      "source": "src/program_actions.py",
+      "label": "Move yaw",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "c41d94ac7b84ecf3cec4d558",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "8e2fb1ae3abc9ae64bb1f1b6",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "0f320e4b0e6239d5e3448fe9",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "427d4c7fe9950c37ef876ee7",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "6e24ccdc660de07a7ea26c2c",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "7d9b743546744709860e2bef",
+      "source": "src/program_actions.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "3bb399a10716d12f0858e06e",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "ce18d8a39dc8ec89c483f311",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "61ba9fa08600d77ec16c8267",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "3bf26c6da02bc1e5585011e1",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "e20d274332a77ab66dd3e107",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "d7f7d3d399fa13b37e45c961",
+      "source": "src/program_actions.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 0.5
+    },
+    {
+      "id": "0b54d9380436896e2a31b034",
+      "source": "src/program_actions.py",
+      "label": "Move to",
       "color": null,
       "scale": 1
     }

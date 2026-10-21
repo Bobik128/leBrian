@@ -15,7 +15,7 @@ EXTENDON_CONVERSION = 1900.0
 EXTENDON_MAX = 1.0
 EXTENDON_MIN = 0.2
 END_RATIO = -0.5988
-YAW_RATIO = 0.21
+YAW_RATIO = 1/7
 
 KP: float = 3.6
 KI: float = 0.001
@@ -84,6 +84,48 @@ async def moveExtendonTo(target: float, speed: float = 0.3, acceleration: float 
     extendonMotor.hold()
     print("exendon done")
 
+async def moveExtendonAndEnd(
+        extendon_target: float, 
+        end_target: float, 
+        extendon_speed: float, 
+        end_speed: float, 
+        extendon_acceleration: float = 600.0, 
+        end_acceleration: float = 1000.0
+    ):
+    await asyncio.gather(
+        moveExtendonTo(extendon_target, speed=extendon_speed, acceleration=extendon_acceleration),
+        moveEndTo(end_target, speed=end_speed, acceleration=end_acceleration)
+    )
+
+async def moveYawAndEnd(
+        yaw_target: float,
+        end_target: float,
+        yaw_speed: float,
+        end_speed: float,
+        yaw_acceleration: float = 600.0,
+        end_acceleration: float = 1000.0
+    ):
+    await asyncio.gather(
+        moveYawTo(yaw_target, speed=yaw_speed, acceleration=yaw_acceleration),
+        moveEndToRaw(int(end_target - yaw_target), speed=end_speed, acceleration=end_acceleration)
+    )
+
+async def moveEndBy(angle: float, speed: float):
+    global END_RATIO
+    endMotor.rotate_to(int((endMotor.current_angle() + angle / END_RATIO)), speed=(speed / END_RATIO), timeout_ms=0)
+    
+    while not endMotor.is_done():
+        await asyncio.sleep(0.01)
+    endMotor.hold()
+
+async def moveEndToRelative(angle: float, speed: float, shortest_path: bool = True):
+    global END_RATIO
+    relative_now_angle = (endMotor.current_angle()*END_RATIO) % 360
+    if shortest_path:
+        await moveEndToRaw(endMotor.current_angle()*END_RATIO + angle - relative_now_angle, speed=speed, acceleration=1000)
+    else:
+        await moveEndToRaw(angle, speed=speed, acceleration=1000)
+
 async def moveTo(
         x: float, 
         y: float, 
@@ -111,7 +153,7 @@ async def initEndMotor():
     endMotor.hold()
 
 async def initExtendonMotor(
-    speed=0.3
+    speed=0.23
 ):
     global extendonMotor
     await asyncio.sleep(0.1)
