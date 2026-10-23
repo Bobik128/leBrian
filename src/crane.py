@@ -128,7 +128,7 @@ async def moveEndToRelative(angle: float, speed: float, shortest_path: bool = Tr
 
 async def rotateRoundOffPivot(
         target_end_angle: float, 
-        radius: float = 0.15, 
+        radius: float = 0.25, 
         angular_speed_deg: float = 100
     ):
     start_yaw: float = brick.gyroAngle() * GYRO_SIGN
@@ -136,7 +136,7 @@ async def rotateRoundOffPivot(
     start_end_abs: float = start_end_rel + start_yaw
     start_length = extendonMotor.current_angle() / EXTENDON_CONVERSION
 
-    if start_end_abs - target_end_angle < 0:
+    if start_end_abs - target_end_angle > 0:
         angular_speed_deg = -angular_speed_deg
 
     angular_speed_rad = math.radians(angular_speed_deg)

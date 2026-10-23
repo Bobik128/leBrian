@@ -1144,7 +1144,7 @@
       "source": "src/program_actions.py",
       "label": "Rotate Around Offset Pivot",
       "color": null,
-      "scale": 1
+      "scale": 0.5
     },
     {
       "id": "8b3a9e317e0290ad2dd280d6",

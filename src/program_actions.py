@@ -24,8 +24,8 @@ async def program():
     await crane.moveYawAndEnd(-4.661187, 108.691649, yaw_speed=35, end_speed=60, yaw_acceleration=config.default_yaw_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:bc108c4c490cbc035a0b5ba8
     await helper.checkColor(0.33, 1)  # @crane:128e39bbbb94f3385ceb3ffd
     await crane.moveEndTo(224.657895, speed=50, acceleration=config.default_end_acceleration)  # @crane:7d9b743546744709860e2bef
-    await crane.moveTo(0.38619, -0.198044, 224.657895, yaw_speed=config.default_yaw_speed, extendon_speed=config.default_extension_speed, end_speed=config.default_end_motor_speed, yaw_acceleration=config.default_yaw_acceleration, extendon_acceleration=config.default_extension_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:d6d7179925c3615cdfdbe99e
-    await crane.rotateRoundOffPivot(-270, angular_speed_deg=config.default_end_motor_speed_off_pivot)  # @crane:ebeb546fff47b728e293a030
+    await crane.moveTo(0.425811, -0.250038, 224.657895, yaw_speed=config.default_yaw_speed, extendon_speed=config.default_extension_speed, end_speed=config.default_end_motor_speed, yaw_acceleration=config.default_yaw_acceleration, extendon_acceleration=config.default_extension_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:d6d7179925c3615cdfdbe99e
+    await crane.rotateRoundOffPivot(90, angular_speed_deg=config.default_end_motor_speed_off_pivot)  # @crane:ebeb546fff47b728e293a030
     await crane.moveTo(0.273904, -0.165517, 90, yaw_speed=config.default_yaw_speed, extendon_speed=config.default_extension_speed, end_speed=config.default_end_motor_speed, yaw_acceleration=config.default_yaw_acceleration, extendon_acceleration=config.default_extension_acceleration, end_acceleration=config.default_end_acceleration)  # @crane:8b3a9e317e0290ad2dd280d6
     await crane.moveExtendonTo(0.274125, speed=config.default_extension_speed, acceleration=config.default_extension_acceleration)  # @crane:c8d8bbb61893e51e4d66f570
     
