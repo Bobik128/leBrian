@@ -18,9 +18,9 @@ async def initGyro(port):
     global gyro
     gyro = sensors.EV3.GyroSensorEV3(port)
 
-    await asyncio.sleep(1.0)
-    gyro.reboot()
-    await asyncio.sleep(1.0)
+    # await asyncio.sleep(1.0)
+    # gyro.reboot()
+    # await asyncio.sleep(1.0)
 
     gyro.set_mode(gyro.Mode.ANGLE)
 

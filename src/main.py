@@ -33,7 +33,7 @@ async def main():
     print("Init crane")
     await brick.waitForPressWithGyroCheck()
     await asyncio.sleep(0.5)
-    await crane.init(motors.MotorPort.D, motors.MotorPort.B, motors.MotorPort.C, sensors.SensorPort.S1)
+    await crane.init(motors.MotorPort.A, motors.MotorPort.B, motors.MotorPort.C, sensors.SensorPort.S1)
 
     await program_actions.program()
 try:

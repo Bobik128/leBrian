@@ -52,6 +52,26 @@ async def moveYawTo(target_angle_deg: float, speed: float = 100.0, acceleration:
         yawMotor.run_at_speed(int(speed_out / YAW_RATIO))
         await asyncio.sleep(0.01)
 
+    timestart = time.ticks_ms()
+
+    while time.ticks_ms() - timestart < 500:
+            current_angle = brick.gyroAngle() * GYRO_SIGN
+            output = pid.pidLoop(
+                target_angle_deg,
+                current_angle,
+                pid_state,
+                0.001,
+                Kp=KP,
+                Ki=KI,
+                Kd=KD,
+            )
+    
+            speed_out = _clamp(output, -speed, speed)
+            print(current_angle)
+            print(target_angle_deg)
+            yawMotor.run_at_speed(int(speed_out / YAW_RATIO))
+            await asyncio.sleep(0.01)
+
     yawMotor.hold()
 
 async def moveEndTo(target_deg: float, speed: float = 100.0, acceleration: float = 600.0):
@@ -126,9 +146,20 @@ async def moveEndToRelative(angle: float, speed: float, shortest_path: bool = Tr
     else:
         await moveEndToRaw(angle, speed=speed, acceleration=1000)
 
+async def rotateRoundOffPivotByAngle(
+        angle: float, 
+        radius: float = 0.28, 
+        angular_speed_deg: float = 100
+    ):
+    start_yaw: float = brick.gyroAngle() * GYRO_SIGN
+    start_end_rel: float = endMotor.current_angle() * END_RATIO
+    start_end_abs: float = start_end_rel + start_yaw
+
+    await rotateRoundOffPivot(start_end_abs + angle, radius, angular_speed_deg)
+
 async def rotateRoundOffPivot(
         target_end_angle: float, 
-        radius: float = 0.25, 
+        radius: float = 0.28, 
         angular_speed_deg: float = 100
     ):
     start_yaw: float = brick.gyroAngle() * GYRO_SIGN
@@ -220,9 +251,21 @@ async def moveToSynced( # computes the speeds so all three effectors arrive at t
 
 async def initEndMotor():
     global endMotor
-    await asyncio.sleep(0.1)
-    endMotor.reset_angle()
+    print("Init end motor")
+    # await brick.waitForPress()
+    # await asyncio.sleep(0.1)
+    endMotor.run_at_speed(150)
+    await asyncio.sleep(2.0)
+    endMotor.run_at_speed(-150)
+    await asyncio.sleep(2.0)
+    endMotor.coast()
+
+    await asyncio.sleep(1.0)
+    endMotor.reset_angle(30)
     endMotor.hold()
+    print("Init end motor OK")
+    await brick.waitForPress()
+    await moveEndTo(-10, 90)
 
 async def initExtendonMotor(
     speed=0.23
