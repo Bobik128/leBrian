@@ -4,6 +4,7 @@ import time
 import math
 import brick
 import pid
+from brian.buttons import UiEventsListener
 
 yawMotor = None
 extendonMotor = None
@@ -28,7 +29,7 @@ def _check_timeout(start_ms, timeout, message):
 def _clamp(value, min_value, max_value):
     return max(min_value, min(value, max_value))
 
-async def moveYawTo(target_angle_deg: float, speed: float = 100.0, acceleration: float = 1000.0, tolerance: float = 1.1, timeout: float = 8.0):
+async def moveYawTo(target_angle_deg: float, speed: float = 100.0, acceleration: float = 1000.0, tolerance: float = 1.1, timeout: float = 8.0, timewait: float = 500):
     global yawMotor, KP, KI, KD
     # yawMotor.set_acceleration_limit(int(acceleration))
     pid_state = pid.PIDState()
@@ -54,7 +55,7 @@ async def moveYawTo(target_angle_deg: float, speed: float = 100.0, acceleration:
 
     timestart = time.ticks_ms()
 
-    while time.ticks_ms() - timestart < 500:
+    while time.ticks_ms() - timestart < timewait:
             current_angle = brick.gyroAngle() * GYRO_SIGN
             output = pid.pidLoop(
                 target_angle_deg,
@@ -123,10 +124,11 @@ async def moveYawAndEnd(
         yaw_speed: float,
         end_speed: float,
         yaw_acceleration: float = 600.0,
-        end_acceleration: float = 1000.0
+        end_acceleration: float = 1000.0,
+        timewait: float = 500
     ):
     await asyncio.gather(
-        moveYawTo(yaw_target, speed=yaw_speed, acceleration=yaw_acceleration),
+        moveYawTo(yaw_target, speed=yaw_speed, acceleration=yaw_acceleration, timewait=timewait),
         moveEndToRaw(int(end_target - yaw_target), speed=end_speed, acceleration=end_acceleration)
     )
 
@@ -211,13 +213,14 @@ async def moveTo(
         end_speed: float, 
         yaw_acceleration: float = 600.0, 
         extendon_acceleration: float = 600.0, 
-        end_acceleration: float = 1000.0
+        end_acceleration: float = 1000.0,
+        timewait: float = 500
     ):
 
     yaw_target = math.degrees(math.atan2(y, x))
     extendon_target = math.sqrt(x**2 + y**2)
     await asyncio.gather(
-        moveYawTo(yaw_target, speed=yaw_speed, acceleration=yaw_acceleration),
+        moveYawTo(yaw_target, speed=yaw_speed, acceleration=yaw_acceleration, timewait = timewait),
         moveExtendonTo(extendon_target, speed=extendon_speed, acceleration=extendon_acceleration),
         moveEndToRaw(int(end_angle - yaw_target), speed=end_speed, acceleration=end_acceleration)
     )
@@ -252,20 +255,29 @@ async def moveToSynced( # computes the speeds so all three effectors arrive at t
 async def initEndMotor():
     global endMotor
     print("Init end motor")
-    # await brick.waitForPress()
-    # await asyncio.sleep(0.1)
-    endMotor.run_at_speed(150)
-    await asyncio.sleep(2.0)
-    endMotor.run_at_speed(-150)
-    await asyncio.sleep(2.0)
-    endMotor.coast()
+    endMotor.reset_angle()
+    endMotor.hold()
 
-    await asyncio.sleep(1.0)
-    endMotor.reset_angle(30)
+    listener: UiEventsListener = UiEventsListener()
+    knob1: UiEventsListener.KnobEvent = listener.knob_event_since_last()
+    absolute_knob = knob1.turned_to
+    while True:
+        knob: UiEventsListener.KnobEvent = listener.knob_event_since_last()
+        if knob.just_pressed:
+            break
+
+        # print(absolute_knob - knob.turned_to)
+        endMotor.rotate_to((absolute_knob - knob.turned_to)*(-4), 250, timeout_ms = 0)
+        # while not endMotor.is_done():
+        #     await asyncio.sleep(0.01)
+        await asyncio.sleep(0.01)
+
+    await asyncio.sleep(0.1)
+    endMotor.reset_angle()
     endMotor.hold()
     print("Init end motor OK")
     await brick.waitForPress()
-    await moveEndTo(-10, 90)
+    # await moveEndTo(-10, 90)
 
 async def initExtendonMotor(
     speed=0.23
