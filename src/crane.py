@@ -29,7 +29,7 @@ def _check_timeout(start_ms, timeout, message):
 def _clamp(value, min_value, max_value):
     return max(min_value, min(value, max_value))
 
-async def moveYawTo(target_angle_deg: float, speed: float = 100.0, acceleration: float = 1000.0, tolerance: float = 1.1, timeout: float = 8.0, timewait: float = 500):
+async def moveYawTo(target_angle_deg: float, speed: float = 100.0, acceleration: float = 1000.0, tolerance: float = 1.1, timeout: float = 8.0, timewait: float = 100):
     global yawMotor, KP, KI, KD
     # yawMotor.set_acceleration_limit(int(acceleration))
     pid_state = pid.PIDState()
@@ -125,7 +125,7 @@ async def moveYawAndEnd(
         end_speed: float,
         yaw_acceleration: float = 600.0,
         end_acceleration: float = 1000.0,
-        timewait: float = 500
+        timewait: float = 100
     ):
     await asyncio.gather(
         moveYawTo(yaw_target, speed=yaw_speed, acceleration=yaw_acceleration, timewait=timewait),
@@ -214,7 +214,7 @@ async def moveTo(
         yaw_acceleration: float = 600.0, 
         extendon_acceleration: float = 600.0, 
         end_acceleration: float = 1000.0,
-        timewait: float = 500
+        timewait: float = 100
     ):
 
     yaw_target = math.degrees(math.atan2(y, x))
