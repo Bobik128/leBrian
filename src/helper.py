@@ -11,7 +11,7 @@ import crane
 import config
 
 async def checkColor(extendon_placeholder_pos: float = 0.33, index: int = 1):
-    await crane.moveExtendonTo(0.38, speed=0.25, acceleration=50)
+    await crane.moveExtendonTo(0.4, speed=0.25, acceleration=50)
     
     base_yaw = brick.gyroAngle()*crane.GYRO_SIGN
 
@@ -59,10 +59,10 @@ async def checkColor(extendon_placeholder_pos: float = 0.33, index: int = 1):
             crane.moveExtendonTo(0.55, speed=0.15, acceleration=50)
         )
         await asyncio.gather(
-                    crane.moveYawTo(base_yaw - 26, 23),
-                    crane.moveEndToRelative(180, 50),
-                    crane.moveExtendonTo(0.5, speed=0.15, acceleration=50)
-                )
+            crane.moveYawTo(base_yaw - 26, 23),
+            crane.moveEndToRelative(180, 50),
+            crane.moveExtendonTo(0.5, speed=0.15, acceleration=50)
+        )
         # await crane.moveExtendonTo(0.55, speed=0.25, acceleration=50)
     else:
         # print(f"Clr OK for {index}: det. {color}")
@@ -79,7 +79,7 @@ async def checkColor(extendon_placeholder_pos: float = 0.33, index: int = 1):
         )
         await asyncio.gather(
             crane.moveEndToRelative(208, 60),
-            crane.moveExtendonTo(0.45, speed=0.11, acceleration=50),
+            crane.moveExtendonTo(0.5, speed=0.11, acceleration=50),
             crane.moveYawTo(base_yaw - 28, speed=30)
         )
         

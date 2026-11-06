@@ -33,7 +33,7 @@
     "showGrid": true,
     "showRange": true,
     "showPaths": true,
-    "showLabels": true,
+    "showLabels": false,
     "backgroundOpacity": 1,
     "backgroundPage": 1,
     "snap": false
@@ -1901,6 +1901,104 @@
       "label": "Move to",
       "color": null,
       "scale": 1
+    },
+    {
+      "id": "9ce9f328abcbf05805ca4542",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "73c75efc3c0815b566d5e80b",
+      "source": "src/program_actions.py",
+      "label": "Yaw + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "4bae22eab120a52c0cad9cde",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "a166c5c26d93ed6f1581582e",
+      "source": "src/program_actions.py",
+      "label": "Chceck Color",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "ac442a223b56161e801fc9a8",
+      "source": "src/program_actions.py",
+      "label": "Yaw + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "8fb51fb1a2c457cf170273b3",
+      "source": "src/program_actions.py",
+      "label": "Yaw + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "ae2d4f4c6d153cb4c2aabcb3",
+      "source": "src/program_actions.py",
+      "label": "Move yaw",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "740c6782eea49264fef67d7f",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "1d382e797c0ae044109d94b6",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "6bfd4e95583c56cb9abff9f8",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "39c1fdb790a64628e9cc66bf",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "1dc23a4b48d382bc11de6fbd",
+      "source": "src/program_actions.py",
+      "label": "Move yaw",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "ccb59e0ce8447a6bca6e6780",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "0b491a54f57b3bc1025236fe",
+      "source": "src/program_actions.py",
+      "label": "Move end",
+      "color": null,
+      "scale": 0.5
     }
   ],
   "templateVersion": 2
