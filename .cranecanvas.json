@@ -1789,6 +1789,118 @@
       "label": "Extension + end",
       "color": null,
       "scale": 1
+    },
+    {
+      "id": "0e2d62db17144a83bf0e17f1",
+      "source": "src/program_actions.py",
+      "label": "Yaw + extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "b694b05968c8c42863ad7781",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "f683312169d7acbd7508b053",
+      "source": "src/program_actions.py",
+      "label": "Yaw + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "273d18bf5edcff0930bfbb55",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "1d1d7a978f19a45c080a11bc",
+      "source": "src/program_actions.py",
+      "label": "Yaw + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "1094c11601ec27e07e883b21",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "3253d1a03af035620712d579",
+      "source": "src/program_actions.py",
+      "label": "Yaw + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "1ade02e79138502f60362169",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "d5f9d999cb8b5cfaff8c17e6",
+      "source": "src/program_actions.py",
+      "label": "Extension + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "298375d67f5ccf84e602f487",
+      "source": "src/program_actions.py",
+      "label": "Yaw + end",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "5ca26dc8d283a98a66eef772",
+      "source": "src/program_actions.py",
+      "label": "Chceck Color",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "ac1f99560a9b560271c45a1f",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "0a8b63c986c41c1f842deecb",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "09e23af4731364c5bd138efc",
+      "source": "src/program_actions.py",
+      "label": "Move Extendon",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "b13cb8292ee7cb3a5df51a28",
+      "source": "src/program_actions.py",
+      "label": "Yaw + extension",
+      "color": null,
+      "scale": 1
+    },
+    {
+      "id": "b8c28a7a200fd592c4ff9f7d",
+      "source": "src/program_actions.py",
+      "label": "Move to",
+      "color": null,
+      "scale": 1
     }
   ],
   "templateVersion": 2

@@ -12,6 +12,6 @@ default_synced_move_time: float = 2.0
 default_end_motor_speed_off_pivot: float = 100
 
 brick_orientations: dict[int, ColorSensorEV3.Color] = {
-    1: (ColorSensorEV3.Color.BLUE, ColorSensorEV3.Color.RED),
+    1: (ColorSensorEV3.Color.YELLOW, ColorSensorEV3.Color.GREEN),
     2: (ColorSensorEV3.Color.RED, ColorSensorEV3.Color.GREEN)
 }

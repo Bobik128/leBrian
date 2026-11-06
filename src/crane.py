@@ -18,8 +18,8 @@ EXTENDON_MIN = 0.2
 END_RATIO = -0.5988
 YAW_RATIO = 1/7
 
-KP: float = 3.6
-KI: float = 0.001
+KP: float = 4.0
+KI: float = 0.01
 KD: float = 0.0001
 
 def _check_timeout(start_ms, timeout, message):
@@ -77,7 +77,7 @@ async def moveYawTo(target_angle_deg: float, speed: float = 100.0, acceleration:
 
 async def moveEndTo(target_deg: float, speed: float = 100.0, acceleration: float = 600.0):
     global yawMotor, GYRO_SIGN
-    await moveEndToRaw(int(target_deg - brick.gyroAngle() * GYRO_SIGN))
+    await moveEndToRaw(int(target_deg - brick.gyroAngle() * GYRO_SIGN), speed)
 
 async def moveEndToRaw(target_deg: float, speed: float = 100.0, acceleration: float = 600.0):
     global endMotor
